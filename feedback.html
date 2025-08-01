@@ -197,16 +197,6 @@
     </footer>
 
     <script>
-        // ============================================
-        // STEP 2: REPLACE THESE WITH YOUR ACTUAL VALUES
-        // ============================================
-        const AIRTABLE_API_KEY = 'patsfchfeaJZkyEwk.9d2fea601d69114d8d3c662fcfc890f043d11c3389fd5ecebb22affe95cbacf5'; // Replace with your actual API token
-        const AIRTABLE_BASE_ID = 'appt3Xmwm180m70JJ'; // Replace with your actual base ID  
-        const AIRTABLE_TABLE_NAME = 'Feedback'; // This should match your table name in Airtable
-
-        // Set this to false once you have real Airtable credentials
-        const USE_DEMO_MODE = false; // Change to false when ready to use real Airtable
-
         // Global variables
         const MAX_VISIBLE_REVIEWS = 4;
         let allReviews = [];
@@ -245,112 +235,31 @@
             });
         }
 
-        // ============================================
-        // STEP 3: REAL AIRTABLE API FUNCTIONS
-        // ============================================
-        async function saveReviewToAirtable(reviewData) {
-            if (USE_DEMO_MODE) {
-                // Demo mode - simulate API delay
-                console.log('Demo mode: Would save to Airtable:', reviewData);
-                return new Promise(resolve => {
-                    setTimeout(() => {
-                        resolve({ success: true, id: 'demo_' + Date.now() });
-                    }, 1000);
-                });
-            }
-
+        // API Functions using Vercel serverless function
+        async function saveReviewToAPI(reviewData) {
             try {
-                console.log('Saving to Airtable:', reviewData);
-
-                const response = await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${AIRTABLE_TABLE_NAME}`, {
+                console.log('Submitting feedback:', reviewData);
+                
+                const response = await fetch('/api/feedback', {
                     method: 'POST',
                     headers: {
-                        'Authorization': `Bearer ${AIRTABLE_API_KEY}`,
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({
-                        records: [{
-                            fields: {
-                                'Name': reviewData.name,
-                                'Email': reviewData.email || '',
-                                'Rating': reviewData.rating,
-                                'Category': reviewData.category,
-                                'Message': reviewData.feedback, // Note: using 'Message' to match your Airtable setup
-                                'Date': reviewData.timestamp.split('T')[0], // Just the date part
-                                'Status': 'New'
-                            }
-                        }]
-                    })
+                    body: JSON.stringify(reviewData)
                 });
 
                 const result = await response.json();
-
+                
                 if (response.ok) {
-                    console.log('Successfully saved to Airtable:', result);
+                    console.log('Successfully submitted feedback:', result);
                     return { success: true, data: result };
                 } else {
-                    console.error('Airtable API error:', result);
+                    console.error('API error:', result);
                     return { success: false, error: result };
                 }
             } catch (error) {
-                console.error('Error saving to Airtable:', error);
+                console.error('Network error:', error);
                 return { success: false, error: error.message };
-            }
-        }
-
-        async function loadReviewsFromAirtable() {
-            if (USE_DEMO_MODE) {
-                // Demo mode - return sample data after delay
-                return new Promise(resolve => {
-                    setTimeout(() => {
-                        resolve([
-                            {
-                                name: 'Saw Eh Htoo',
-                                rating: 5,
-                                category: 'usability',
-                                feedback: 'This typing application is excellent for learning Karen script! Very user-friendly and accurate.',
-                                timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString() // 2 days ago
-                            },
-                            {
-                                name: 'Naw Paw',
-                                rating: 4,
-                                category: 'features',
-                                feedback: 'Great tool for preserving our Karen language. Would love to see more font options in future updates.',
-                                timestamp: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString() // 1 week ago
-                            }
-                        ]);
-                    }, 1500);
-                });
-            }
-
-            try {
-                console.log('Loading reviews from Airtable...');
-
-                const response = await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${AIRTABLE_TABLE_NAME}?sort[0][field]=Date&sort[0][direction]=desc&maxRecords=50`, {
-                    headers: {
-                        'Authorization': `Bearer ${AIRTABLE_API_KEY}`
-                    }
-                });
-
-                const result = await response.json();
-
-                if (response.ok) {
-                    console.log('Successfully loaded from Airtable:', result);
-                    return result.records.map(record => ({
-                        name: record.fields.Name || 'Anonymous',
-                        email: record.fields.Email || '',
-                        rating: record.fields.Rating || 5,
-                        category: record.fields.Category || 'general',
-                        feedback: record.fields.Message || '', // Note: using 'Message' field
-                        timestamp: record.fields.Date || new Date().toISOString()
-                    }));
-                } else {
-                    console.error('Error loading from Airtable:', result);
-                    return [];
-                }
-            } catch (error) {
-                console.error('Error loading from Airtable:', error);
-                return [];
             }
         }
 
@@ -380,10 +289,10 @@
             }
 
             try {
-                const result = await saveReviewToAirtable(formData);
+                const result = await saveReviewToAPI(formData);
 
                 if (result.success) {
-                    // Add new review to local array
+                    // Add new review to local array for immediate display
                     allReviews.unshift(formData);
 
                     // Update display
@@ -561,35 +470,31 @@
             }, 1000);
         });
 
-        // Initialize on page load
-        async function initializePage() {
-            // Show loading state
-            const noReviewsMessage = document.getElementById('noReviewsMessage');
-            noReviewsMessage.innerHTML = `
-                <i class="fas fa-spinner fa-spin text-4xl text-white/30 mb-4"></i>
-                <h3 class="text-xl text-white/70 mb-2">Loading reviews...</h3>
-                <p class="text-white/50">Please wait a moment</p>
-            `;
+        // Initialize with sample data for display
+        function initializePage() {
+            // Add some sample reviews for demonstration
+            allReviews = [
+                {
+                    name: 'Saw Eh Htoo',
+                    rating: 5,
+                    category: 'usability',
+                    feedback: 'This typing application is excellent for learning Karen script! Very user-friendly and accurate.',
+                    timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString()
+                },
+                {
+                    name: 'Naw Paw',
+                    rating: 4,
+                    category: 'features',
+                    feedback: 'Great tool for preserving our Karen language. Would love to see more font options in future updates.',
+                    timestamp: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
+                }
+            ];
 
-            try {
-                // Load existing reviews from Airtable
-                allReviews = await loadReviewsFromAirtable();
-
-                // Update display
-                updateVisibleReviews();
-                updateStatistics();
-            } catch (error) {
-                console.error('Error loading reviews:', error);
-                // Reset to no reviews state
-                noReviewsMessage.innerHTML = `
-                    <i class="fas fa-comments text-6xl text-white/30 mb-4"></i>
-                    <h3 class="text-xl text-white/70 mb-2">No reviews yet</h3>
-                    <p class="text-white/50">Be the first to share your experience!</p>
-                `;
-            }
+            updateVisibleReviews();
+            updateStatistics();
         }
 
-        // Start initialization when page loads
+        // Initialize page
         initializePage();
         updateStars();
     </script>
