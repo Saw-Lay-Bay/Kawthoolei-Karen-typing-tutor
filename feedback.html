@@ -235,7 +235,7 @@
             });
         }
 
-        // API Functions using Vercel serverless function
+        // API Functions
         async function saveReviewToAPI(reviewData) {
             try {
                 console.log('Submitting feedback:', reviewData);
@@ -249,7 +249,6 @@
                 });
 
                 console.log('Response status:', response.status);
-                console.log('Response headers:', response.headers);
 
                 const responseText = await response.text();
                 console.log('Raw response:', responseText);
@@ -259,7 +258,7 @@
                     result = JSON.parse(responseText);
                 } catch (parseError) {
                     console.error('Failed to parse response as JSON:', parseError);
-                    result = { error: 'Invalid response format', details: responseText };
+                    throw new Error(`Invalid response format: ${responseText}`);
                 }
                 
                 if (response.ok) {
@@ -267,11 +266,11 @@
                     return { success: true, data: result };
                 } else {
                     console.error('API error:', result);
-                    return { success: false, error: result };
+                    throw new Error(result.error || `HTTP ${response.status}: ${result.details || 'Unknown error'}`);
                 }
             } catch (error) {
                 console.error('Network error:', error);
-                return { success: false, error: { message: error.message, stack: error.stack } };
+                throw error;
             }
         }
 
@@ -284,32 +283,34 @@
             submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Submitting...';
             submitButton.disabled = true;
 
-            const formData = {
-                name: document.getElementById('userName').value.trim(),
-                email: document.getElementById('userEmail').value.trim(),
-                rating: parseInt(document.getElementById('rating').value),
-                category: document.getElementById('category').value,
-                feedback: document.getElementById('feedback').value.trim(),
-                timestamp: new Date().toISOString()
-            };
-
-            console.log('Form data being submitted:', formData);
-
-            if (formData.rating === 0) {
-                showErrorMessage('Please provide a star rating before submitting.');
-                submitButton.innerHTML = originalButtonText;
-                submitButton.disabled = false;
-                return;
-            }
-
-            if (!formData.name || !formData.category || !formData.feedback) {
-                showErrorMessage('Please fill in all required fields.');
-                submitButton.innerHTML = originalButtonText;
-                submitButton.disabled = false;
-                return;
-            }
-
             try {
+                const formData = {
+                    name: document.getElementById('userName').value.trim(),
+                    email: document.getElementById('userEmail').value.trim(),
+                    rating: parseInt(document.getElementById('rating').value),
+                    category: document.getElementById('category').value,
+                    feedback: document.getElementById('feedback').value.trim(),
+                    timestamp: new Date().toISOString()
+                };
+
+                console.log('Form data being submitted:', formData);
+
+                // Validation
+                if (formData.rating === 0 || isNaN(formData.rating)) {
+                    showErrorMessage('Please provide a star rating before submitting.');
+                    return;
+                }
+
+                if (!formData.name || !formData.category || !formData.feedback) {
+                    showErrorMessage('Please fill in all required fields.');
+                    return;
+                }
+
+                if (formData.rating < 1 || formData.rating > 5) {
+                    showErrorMessage('Rating must be between 1 and 5 stars.');
+                    return;
+                }
+
                 const result = await saveReviewToAPI(formData);
 
                 if (result.success) {
@@ -327,25 +328,14 @@
 
                     // Show success message
                     showSuccessMessage();
-                } else {
-                    console.error('Failed to save:', result.error);
-                    let errorMsg = 'Error submitting feedback. ';
-                    if (result.error && result.error.details) {
-                        errorMsg += result.error.details;
-                    } else if (result.error && result.error.message) {
-                        errorMsg += result.error.message;
-                    } else {
-                        errorMsg += 'Please check the console for details.';
-                    }
-                    showErrorMessage(errorMsg);
                 }
             } catch (error) {
                 console.error('Submission error:', error);
-                showErrorMessage('Network error occurred. Please check your connection and try again.');
+                showErrorMessage(`Error submitting feedback: ${error.message}`);
+            } finally {
+                submitButton.innerHTML = originalButtonText;
+                submitButton.disabled = false;
             }
-
-            submitButton.innerHTML = originalButtonText;
-            submitButton.disabled = false;
         });
 
         function updateVisibleReviews() {
@@ -469,7 +459,7 @@
         }
 
         function showSuccessMessage() {
-            showMessage('Feedback submitted successfully!', 'success');
+            showMessage('Feedback submitted successfully! Thank you for your review.', 'success');
         }
 
         function showErrorMessage(message) {
@@ -493,7 +483,9 @@
             setTimeout(() => {
                 messageDiv.classList.add('translate-x-full');
                 setTimeout(() => {
-                    document.body.removeChild(messageDiv);
+                    if (document.body.contains(messageDiv)) {
+                        document.body.removeChild(messageDiv);
+                    }
                 }, 300);
             }, type === 'error' ? 5000 : 3000);
         }
