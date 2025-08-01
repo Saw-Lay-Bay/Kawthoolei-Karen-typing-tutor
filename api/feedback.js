@@ -1,82 +1,95 @@
-// api/feedback.js - Vercel Serverless Function
+// api/feedback.js
 export default async function handler(req, res) {
-    // Enable CORS
-    res.setHeader('Access-Control-Allow-Credentials', true);
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
-    res.setHeader(
-        'Access-Control-Allow-Headers',
-        'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
-    );
+  // Set CORS headers
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-    // Handle preflight request
-    if (req.method === 'OPTIONS') {
-        res.status(200).end();
-        return;
+  // Handle preflight requests
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
+
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  try {
+    const { name, email, rating, category, feedback, timestamp } = req.body;
+
+    // Validate required fields
+    if (!name || !rating || !category || !feedback) {
+      return res.status(400).json({ 
+        error: 'Missing required fields: name, rating, category, and feedback are required' 
+      });
     }
 
-    // Only allow POST requests
-    if (req.method !== 'POST') {
-        return res.status(405).json({ message: 'Method not allowed' });
-    }
-
-    // Get environment variables
+    // Airtable API configuration
     const AIRTABLE_API_KEY = process.env.AIRTABLE_API_KEY;
     const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
     const AIRTABLE_TABLE_NAME = 'Feedback'; // Your table name
 
-    // Check if environment variables are set
     if (!AIRTABLE_API_KEY || !AIRTABLE_BASE_ID) {
-        return res.status(500).json({ 
-            message: 'Server configuration error: Missing Airtable credentials' 
-        });
+      console.error('Missing Airtable configuration');
+      return res.status(500).json({ 
+        error: 'Server configuration error: Missing Airtable credentials' 
+      });
     }
 
-    try {
-        console.log('Received feedback data:', req.body);
-
-        // Save to Airtable
-        const airtableResponse = await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${AIRTABLE_TABLE_NAME}`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${AIRTABLE_API_KEY}`,
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                records: [{
-                    fields: {
-                        'Name': req.body.name || 'Anonymous',
-                        'Email': req.body.email || '',
-                        'Rating': req.body.rating || 5,
-                        'Category': req.body.category || 'general',
-                        'Message': req.body.feedback || '',
-                        'Date': req.body.timestamp ? req.body.timestamp.split('T')[0] : new Date().toISOString().split('T')[0],
-                        'Status': 'New'
-                    }
-                }]
-            }),
-        });
-
-        const airtableResult = await airtableResponse.json();
-
-        if (airtableResponse.ok) {
-            console.log('Successfully saved to Airtable:', airtableResult);
-            res.status(200).json({ 
-                message: 'Feedback submitted successfully',
-                id: airtableResult.records[0].id
-            });
-        } else {
-            console.error('Airtable API error:', airtableResult);
-            res.status(400).json({ 
-                message: 'Failed to save feedback',
-                error: airtableResult
-            });
+    // Prepare data for Airtable
+    const airtableData = {
+      records: [
+        {
+          fields: {
+            Name: name,
+            Email: email || '',
+            Rating: rating,
+            Category: category,
+            Feedback: feedback,
+            Timestamp: timestamp || new Date().toISOString(),
+            'Submitted At': new Date().toISOString()
+          }
         }
-    } catch (error) {
-        console.error('Server error:', error);
-        res.status(500).json({ 
-            message: 'Internal server error',
-            error: error.message
-        });
+      ]
+    };
+
+    // Send to Airtable
+    const airtableResponse = await fetch(
+      `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${AIRTABLE_TABLE_NAME}`,
+      {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${AIRTABLE_API_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(airtableData)
+      }
+    );
+
+    if (!airtableResponse.ok) {
+      const errorData = await airtableResponse.text();
+      console.error('Airtable API error:', errorData);
+      return res.status(airtableResponse.status).json({ 
+        error: 'Failed to save to database',
+        details: errorData 
+      });
     }
+
+    const result = await airtableResponse.json();
+    console.log('Successfully saved to Airtable:', result);
+
+    res.status(200).json({ 
+      success: true, 
+      message: 'Feedback submitted successfully',
+      data: result 
+    });
+
+  } catch (error) {
+    console.error('API error:', error);
+    res.status(500).json({ 
+      error: 'Internal server error',
+      details: error.message 
+    });
+  }
 }
