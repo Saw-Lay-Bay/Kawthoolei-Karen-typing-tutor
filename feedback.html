@@ -136,7 +136,13 @@
                     Recent Reviews
                 </h2>
 
-                <div id="noReviewsMessage" class="text-center py-12">
+                <!-- Loading indicator -->
+                <div id="loadingReviews" class="text-center py-12">
+                    <i class="fas fa-spinner fa-spin text-4xl text-white/50 mb-4"></i>
+                    <p class="text-white/70">Loading reviews...</p>
+                </div>
+
+                <div id="noReviewsMessage" class="text-center py-12 hidden">
                     <i class="fas fa-comments text-6xl text-white/30 mb-4"></i>
                     <h3 class="text-xl text-white/70 mb-2">No reviews yet</h3>
                     <p class="text-white/50">Be the first to share your experience!</p>
@@ -200,7 +206,7 @@
         // Global variables
         const MAX_VISIBLE_REVIEWS = 4;
         let allReviews = [];
-        let visibleReviews = [];
+        let visibleReviewsCount = 0;
         let currentRating = 0;
 
         // Star rating functionality
@@ -236,6 +242,43 @@
         }
 
         // API Functions
+        async function loadReviewsFromAPI() {
+            try {
+                console.log('Loading reviews from API...');
+                
+                const response = await fetch('/api/feedback', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+
+                console.log('Response status:', response.status);
+
+                const responseText = await response.text();
+                console.log('Raw response:', responseText);
+
+                let result;
+                try {
+                    result = JSON.parse(responseText);
+                } catch (parseError) {
+                    console.error('Failed to parse response as JSON:', parseError);
+                    throw new Error(`Invalid response format: ${responseText}`);
+                }
+                
+                if (response.ok) {
+                    console.log('Successfully loaded reviews:', result);
+                    return { success: true, reviews: result.reviews || [] };
+                } else {
+                    console.error('API error:', result);
+                    throw new Error(result.error || `HTTP ${response.status}: ${result.details || 'Unknown error'}`);
+                }
+            } catch (error) {
+                console.error('Network error loading reviews:', error);
+                throw error;
+            }
+        }
+
         async function saveReviewToAPI(reviewData) {
             try {
                 console.log('Submitting feedback:', reviewData);
@@ -342,9 +385,10 @@
             const reviewsList = document.getElementById('reviewsList');
             const noReviewsMessage = document.getElementById('noReviewsMessage');
             const loadMoreBtn = document.getElementById('loadMoreBtn');
+            const loadingReviews = document.getElementById('loadingReviews');
 
-            // Clear current visible reviews
-            reviewsList.innerHTML = '';
+            // Hide loading indicator
+            loadingReviews.classList.add('hidden');
 
             if (allReviews.length === 0) {
                 // Show no reviews message
@@ -358,16 +402,23 @@
             noReviewsMessage.classList.add('hidden');
             reviewsList.classList.remove('hidden');
 
-            // Show up to MAX_VISIBLE_REVIEWS
-            visibleReviews = allReviews.slice(0, MAX_VISIBLE_REVIEWS);
+            // Clear current visible reviews
+            reviewsList.innerHTML = '';
+
+            // Show up to MAX_VISIBLE_REVIEWS or current visible count
+            const showCount = Math.min(visibleReviewsCount || MAX_VISIBLE_REVIEWS, allReviews.length);
+            const visibleReviews = allReviews.slice(0, showCount);
 
             visibleReviews.forEach(review => {
                 addReviewToDOM(review);
             });
 
+            visibleReviewsCount = showCount;
+
             // Show/hide load more button
-            if (allReviews.length > MAX_VISIBLE_REVIEWS) {
+            if (allReviews.length > visibleReviewsCount) {
                 loadMoreBtn.classList.remove('hidden');
+                loadMoreBtn.textContent = `Load More Reviews (${allReviews.length - visibleReviewsCount} remaining)`;
             } else {
                 loadMoreBtn.classList.add('hidden');
             }
@@ -492,49 +543,76 @@
 
         // Load more reviews functionality
         document.getElementById('loadMoreBtn').addEventListener('click', function () {
+            const originalText = this.textContent;
             this.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Loading...';
+            this.disabled = true;
 
             setTimeout(() => {
-                // Show all reviews instead of just the first 4
-                const reviewsList = document.getElementById('reviewsList');
-                reviewsList.innerHTML = '';
-
-                allReviews.forEach(review => {
+                // Show more reviews (add 4 more or show all remaining)
+                const remainingReviews = allReviews.length - visibleReviewsCount;
+                const newShowCount = Math.min(visibleReviewsCount + MAX_VISIBLE_REVIEWS, allReviews.length);
+                
+                // Add the new reviews to the DOM
+                const newReviews = allReviews.slice(visibleReviewsCount, newShowCount);
+                newReviews.forEach(review => {
                     addReviewToDOM(review);
                 });
-
-                // Hide the load more button since all reviews are now shown
-                this.classList.add('hidden');
-            }, 1000);
+                
+                visibleReviewsCount = newShowCount;
+                
+                // Update button state
+                if (visibleReviewsCount >= allReviews.length) {
+                    this.classList.add('hidden');
+                } else {
+                    const remaining = allReviews.length - visibleReviewsCount;
+                    this.textContent = `Load More Reviews (${remaining} remaining)`;
+                    this.disabled = false;
+                }
+            }, 800);
         });
 
-        // Initialize with sample data for display
-        function initializePage() {
-            // Add some sample reviews for demonstration
-            allReviews = [
-                // {
-                //     name: 'Saw Eh Htoo',
-                //     rating: 5,
-                //     category: 'usability',
-                //     feedback: 'This typing application is excellent for learning Karen script! Very user-friendly and accurate.',
-                //     timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString()
-                // },
-                // {
-                //     name: 'Naw Paw',
-                //     rating: 4,
-                //     category: 'features',
-                //     feedback: 'Great tool for preserving our Karen language. Would love to see more font options in future updates.',
-                //     timestamp: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
-                // }
-            ];
-
+        // Initialize page by loading reviews from API
+        async function initializePage() {
+            try {
+                console.log('Initializing page...');
+                
+                // Load reviews from Airtable
+                const result = await loadReviewsFromAPI();
+                
+                if (result.success) {
+                    allReviews = result.reviews || [];
+                    console.log(`Loaded ${allReviews.length} reviews from Airtable`);
+                } else {
+                    console.error('Failed to load reviews');
+                    allReviews = [];
+                }
+            } catch (error) {
+                console.error('Error loading reviews:', error);
+                allReviews = [];
+                
+                // Show error message to user
+                showErrorMessage('Unable to load existing reviews. You can still submit new feedback.');
+            }
+            
+            // Update display with loaded reviews
             updateVisibleReviews();
             updateStatistics();
         }
 
-        // Initialize page
-        initializePage();
-        updateStars();
+        // Initialize page when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            initializePage();
+            updateStars();
+        });
+
+        // Also initialize immediately if DOM is already loaded
+        if (document.readyState === 'loading') {
+            // Do nothing, we already have the DOMContentLoaded listener
+        } else {
+            // DOM already loaded
+            initializePage();
+            updateStars();
+        }
     </script>
 </body>
 
