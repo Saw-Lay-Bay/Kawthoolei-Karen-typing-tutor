@@ -33,30 +33,33 @@ export default async function handler(req, res) {
     if (!AIRTABLE_API_KEY || !AIRTABLE_BASE_ID) {
       console.error('Missing Airtable configuration');
       return res.status(500).json({ 
-        error: 'Server configuration error: Missing Airtable credentials' 
+        error: 'Server configuration error: Missing Airtable credentials',
+        details: 'AIRTABLE_API_KEY or AIRTABLE_BASE_ID not found in environment variables'
       });
     }
 
-    // Prepare data for Airtable
+    // Prepare data for Airtable - matching your exact field names
     const airtableData = {
       records: [
         {
           fields: {
-            Name: name,
-            Email: email || '',
-            Rating: rating,
-            Category: category,
-            Feedback: feedback,
-            Timestamp: timestamp || new Date().toISOString(),
-            'Submitted At': new Date().toISOString()
+            "Name": name,                    // Matches your "Name" column
+            "Email": email || "",            // Matches your "Email" column  
+            "Rating": parseInt(rating),      // Matches your "Rating" column
+            "Category": category,            // Matches your "Category" column
+            "Feedback": feedback,            // Matches your "Feedback" column
+            "Timestamp": timestamp || new Date().toISOString(), // Matches your "Timestamp" column
+            "Submitted At": new Date().toISOString() // Matches your "Submitted At" column
           }
         }
       ]
     };
 
+    console.log('Sending to Airtable:', JSON.stringify(airtableData, null, 2));
+
     // Send to Airtable
     const airtableResponse = await fetch(
-      `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${AIRTABLE_TABLE_NAME}`,
+      `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(AIRTABLE_TABLE_NAME)}`,
       {
         method: 'POST',
         headers: {
@@ -67,16 +70,20 @@ export default async function handler(req, res) {
       }
     );
 
+    const responseText = await airtableResponse.text();
+    console.log('Airtable response status:', airtableResponse.status);
+    console.log('Airtable response:', responseText);
+
     if (!airtableResponse.ok) {
-      const errorData = await airtableResponse.text();
-      console.error('Airtable API error:', errorData);
+      console.error('Airtable API error:', responseText);
       return res.status(airtableResponse.status).json({ 
-        error: 'Failed to save to database',
-        details: errorData 
+        error: 'Failed to save to Airtable',
+        details: responseText,
+        status: airtableResponse.status
       });
     }
 
-    const result = await airtableResponse.json();
+    const result = JSON.parse(responseText);
     console.log('Successfully saved to Airtable:', result);
 
     res.status(200).json({ 
@@ -89,7 +96,8 @@ export default async function handler(req, res) {
     console.error('API error:', error);
     res.status(500).json({ 
       error: 'Internal server error',
-      details: error.message 
+      details: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
     });
   }
 }
