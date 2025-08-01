@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Karen Language Learning Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .progress-bar {
+            transition: width 0.3s ease;
+        }
+
+        .correct-answer {
+            animation: bounce 0.5s ease;
+        }
+
+        .wrong-answer {
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            20%,
+            50%,
+            80%,
+            100% {
+                transform: translateY(0);
+            }
+
+            40% {
+                transform: translateY(-10px);
+            }
+
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            10%,
+            30%,
+            50%,
+            70%,
+            90% {
+                transform: translateX(-5px);
+            }
+
+            20%,
+            40%,
+            60%,
+            80% {
+                transform: translateX(5px);
+            }
+        }
+
+        .slide-enter {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+
+        .slide-enter-active {
+            transform: translateX(0);
+            opacity: 1;
+            transition: all 0.3s ease;
+        }
+
+        .karen-text {
+            font-family: 'Myanmar Text', 'Noto Sans Myanmar', serif;
+            font-size: 1.2em;
+        }
+
+        .audio-button {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .phonetic-text {
+            font-family: 'Courier New', monospace;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            padding: 2px 6px;
+        }
+
+        .audio-player {
+            display: none;
+        }
+    </style>
+</head>
+
+<!-- <body class="h-full flex flex-col bg-gradient-to-br from-blue-500 to-purple-600 overflow-hidden"> -->
+
+<body class="flex flex-col min-h-screen bg-gradient-to-br from-blue-500 to-purple-600">
+
+    <!-- Hidden audio element for pronunciation -->
+    <audio id="karen-audio" class="audio-player"></audio>
+
+    <main class="flex-grow">
+        <nav class="container p-4 py-2 mx-auto mt-2 flex justify-end">
+            <div>
+                <a href="index.html"
+                    class="text-xl py-2 px-4 rounded-lg font-semibold bg-white mr-8 justify-center">Home</a>
+            </div>
+            <div>
+                <a href="karen-language.html"
+                    class="text-xl py-2 px-4 rounded-lg font-semibold bg-white mr-8 justify-center">Karen Main Page</a>
+            </div>
+        </nav>
+
+        <div class="container mx-auto px-4 py-2">
+            <!-- Header with Progress -->
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-2">
+                <div class="flex justify-between items-center mb-4">
+                    <h1 class="text-2xl font-bold text-gray-800 karen-text">ကညီကျိၥ်လိာ်ဒီးလံာ် - Learning Karen
+                        Language
+                    </h1>
+                    <div class="flex items-center space-x-4">
+                        <div class="text-sm text-gray-600">Level: <span id="current-level">Beginner</span></div>
+                        <div class="text-sm text-gray-600">Score: <span id="score">0</span></div>
+                    </div>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="bg-gray-200 rounded-full h-2 mb-1">
+                    <div id="progress-bar" class="progress-bar bg-green-500 h-3 rounded-full" style="width: 0%"></div>
+                </div>
+                <div class="text-sm text-gray-600 text-center">
+                    <span id="progress-text">0% Complete</span>
+                </div>
+            </div>
+
+            <!-- Navigation Tabs -->
+            <div class="bg-white rounded-lg shadow-lg mb-2">
+                <div class="flex border-b">
+                    <button onclick="showSection('vocabulary')"
+                        class="tab-button flex-1 py-4 px-6 text-center font-medium text-gray-600 hover:text-green-600 border-b-2 border-transparent hover:border-green-600 active">
+                        📚 Vocabulary
+                    </button>
+                    <button onclick="showSection('exercise')"
+                        class="tab-button flex-1 py-4 px-6 text-center font-medium text-gray-600 hover:text-green-600 border-b-2 border-transparent hover:border-green-600">
+                        ✏️ Exercise
+                    </button>
+                    <button onclick="showSection('pronunciation')"
+                        class="tab-button flex-1 py-4 px-6 text-center font-medium text-gray-600 hover:text-green-600 border-b-2 border-transparent hover:border-green-600">
+                        🎵 Pronunciation
+                    </button>
+                    <button onclick="showSection('quiz')"
+                        class="tab-button flex-1 py-4 px-6 text-center font-medium text-gray-600 hover:text-green-600 border-b-2 border-transparent hover:border-green-600">
+                        🧠 Quiz
+                    </button>
+                </div>
+            </div>
+
+            <!-- Vocabulary Section -->
+            <div id="vocabulary-section" class="section">
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h2 class="text-xl font-bold mb-4 text-gray-800">Karen Vocabulary Flashcards</h2>
+                    <div class="max-w-md mx-auto">
+                        <div id="flashcard"
+                            class="bg-gradient-to-r from-green-500 to-emerald-600 rounded-lg p-8 text-white text-center cursor-pointer transform transition-transform hover:scale-105 min-h-[250px] flex items-center justify-center">
+                            <div>
+                                <div class="text-4xl font-bold mb-4 karen-text" id="word-display">ဂီၤလၢအဂ့ၤ</div>
+                                <div class="text-sm mb-2 phonetic-text" id="phonetic-display">Gaw Lun A Gay</div>
+                                <div class="text-lg" id="meaning-display">Click to reveal meaning</div>
+                            </div>
+                        </div>
+                        <div class="flex justify-between mt-6">
+                            <button onclick="previousCard()"
+                                class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors">Previous</button>
+                            <button onclick="toggleCard()"
+                                class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-colors">Flip
+                                Card</button>
+                            <button onclick="nextCard()"
+                                class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors">Next</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Exercise Section -->
+            <div id="exercise-section" class="section hidden">
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h2 class="text-xl font-bold mb-4 text-gray-800">Karen Language Exercise</h2>
+                    <div class="max-w-2xl mx-auto">
+                        <div class="bg-green-50 rounded-lg p-6 mb-6">
+                            <p class="text-lg mb-4" id="exercise-sentence">
+                                Complete the Karen phrase: <span class="karen-text font-bold">ယွၢ်ပှၤ _____</span> (I am
+                                _____)
+                                <input type="text" id="exercise-input"
+                                    class="inline-block w-32 px-2 py-1 border-b-2 border-green-500 bg-transparent text-center focus:outline-none focus:border-green-700"
+                                    placeholder="____">
+                            </p>
+                            <div class="text-sm text-gray-600 mb-4">
+                                <span class="phonetic-text">Yaw Phaw _____</span>
+                            </div>
+                            <div class="flex justify-center space-x-4">
+                                <button onclick="checkExercise()"
+                                    class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg transition-colors">Check
+                                    Answer</button>
+                                <button onclick="nextExercise()"
+                                    class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg transition-colors">Next
+                                    Exercise</button>
+                            </div>
+                            <div id="exercise-feedback" class="mt-4 text-center"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pronunciation Section -->
+            <div id="pronunciation-section" class="section hidden">
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h2 class="text-xl font-bold mb-4 text-gray-800">Karen Pronunciation Practice</h2>
+                    <div class="max-w-2xl mx-auto">
+                        <div class="text-center mb-6">
+                            <div class="bg-green-50 rounded-lg p-6 mb-4">
+                                <div class="text-4xl font-bold text-gray-800 mb-3 karen-text" id="pronunciation-word">
+                                    ဂီၤလၢအဂ့ၤ</div>
+                                <div class="text-lg text-green-600 mb-2 font-semibold" id="pronunciation-romanized">Gaw
+                                    Lun
+                                    A Gay</div>
+                                <div class="text-md text-gray-600 mb-4 phonetic-text" id="pronunciation-phonetic">[ɡɔ́
+                                    lún
+                                    ʔə ɡɛ̀]</div>
+                                <div class="text-sm text-gray-700 mb-4" id="pronunciation-meaning">Good Morning</div>
+                                <button onclick="playKarenAudio()"
+                                    class="audio-button bg-green-500 hover:bg-green-600 text-white px-8 py-4 rounded-lg flex items-center mx-auto transition-all">
+                                    <span class="mr-3 text-xl">🔊</span> Listen & Repeat
+                                </button>
+                            </div>
+
+                            <div class="bg-yellow-50 rounded-lg p-4 mb-4">
+                                <h4 class="font-semibold text-yellow-800 mb-2">Pronunciation Tips:</h4>
+                                <div id="pronunciation-tip" class="text-yellow-700">
+                                    <p><strong>Breaking it down:</strong> "Gaw" (low tone) + "Lun" (high tone) + "A"
+                                        (mid) +
+                                        "Gay" (low falling)</p>
+                                    <p class="text-sm mt-2">The tones are very important in Karen language!</p>
+                                </div>
+                            </div>
+
+                            <div class="flex justify-center space-x-4">
+                                <button onclick="previousPronunciation()"
+                                    class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg transition-colors">Previous</button>
+                                <button onclick="nextPronunciation()"
+                                    class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg transition-colors">Next
+                                    Word</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quiz Section -->
+            <div id="quiz-section" class="section hidden">
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h2 class="text-xl font-bold mb-4 text-gray-800">Karen Language Quiz</h2>
+                    <div class="max-w-2xl mx-auto">
+                        <div class="mb-6">
+                            <div class="bg-purple-50 rounded-lg p-6 mb-4">
+                                <h3 class="text-lg font-semibold mb-4" id="quiz-question">What does <span
+                                        class="karen-text">"ဂီၤလၢအဂ့ၤ"</span> mean?</h3>
+                                <div class="space-y-2" id="quiz-options">
+                                    <button onclick="selectAnswer(0)"
+                                        class="quiz-option w-full text-left p-3 rounded-lg bg-white border-2 border-gray-200 hover:border-purple-500 transition-colors">
+                                        A) Good Morning
+                                    </button>
+                                    <button onclick="selectAnswer(1)"
+                                        class="quiz-option w-full text-left p-3 rounded-lg bg-white border-2 border-gray-200 hover:border-purple-500 transition-colors">
+                                        B) Good Evening
+                                    </button>
+                                    <button onclick="selectAnswer(2)"
+                                        class="quiz-option w-full text-left p-3 rounded-lg bg-white border-2 border-gray-200 hover:border-purple-500 transition-colors">
+                                        C) Thank you
+                                    </button>
+                                    <button onclick="selectAnswer(3)"
+                                        class="quiz-option w-full text-left p-3 rounded-lg bg-white border-2 border-gray-200 hover:border-purple-500 transition-colors">
+                                        D) Please
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="text-center">
+                                <button onclick="submitQuiz()"
+                                    class="bg-purple-500 hover:bg-purple-600 text-white px-6 py-2 rounded-lg mr-4 transition-colors">Submit
+                                    Answer</button>
+                                <button onclick="nextQuiz()"
+                                    class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg transition-colors">Next
+                                    Question</button>
+                            </div>
+                            <div id="quiz-feedback" class="mt-4 text-center"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistics Panel -->
+            <div class="bg-white rounded-lg shadow-lg px-6 py-2 mt-2">
+                <h2 class="text-xl font-bold mb-4 text-gray-800">Learning Progress</h2>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-2">
+                    <div class="text-center p-4 bg-green-50 rounded-lg">
+                        <div class="text-2xl font-bold text-green-600" id="words-learned">12</div>
+                        <div class="text-sm text-gray-600">Karen Words Learned</div>
+                    </div>
+                    <div class="text-center p-4 bg-blue-50 rounded-lg">
+                        <div class="text-2xl font-bold text-blue-600" id="exercises-completed">5</div>
+                        <div class="text-sm text-gray-600">Exercises Completed</div>
+                    </div>
+                    <div class="text-center p-4 bg-yellow-50 rounded-lg">
+                        <div class="text-2xl font-bold text-yellow-600" id="quiz-accuracy">85%</div>
+                        <div class="text-sm text-gray-600">Quiz Accuracy</div>
+                    </div>
+                    <div class="text-center p-4 bg-purple-50 rounded-lg">
+                        <div class="text-2xl font-bold text-purple-600" id="study-streak">2</div>
+                        <div class="text-sm text-gray-600">Day Streak</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div class="text-white px-6 py-2 mt-2 flex justify-center items-center">
+        <p class="text-sm">&copy; 2025 Saw Lay Bay (KDHW) - All Rights Reserved</p>
+    </div>
+
+
+    <script>
+        // Karen language vocabulary with proper pronunciation
+        const vocabulary = [
+            {
+                word: "ဂီၤလၢအဂ့ၤ",
+                romanized: "Gaw Lun A Gay",
+                phonetic: "",
+                meaning: "Good Morning",
+                tip: "Breaking it down: 'Gaw' (low tone) + 'Lun' (high tone) + 'A' (mid) + 'Gay' (low falling)"
+            },
+            {
+                word: "ဟါလၢအဂ့ၤ",
+                romanized: "Ha Lun A Gay",
+                phonetic: "",
+                meaning: "Good Evening",
+                tip: "'Ha' with low tone, 'Lun' with high tone, 'A' mid, 'Gay' low falling"
+            },
+            {
+                word: "တၢ်အဲၣ်",
+                romanized: "Ta Eh",
+                phonetic: "",
+                meaning: "Love",
+                tip: "Both syllables with low tone"
+            },
+            {
+                word: "တၢ်ဘျုး",
+                romanized: "Ta Blut",
+                phonetic: "",
+                meaning: "Thank you",
+                tip: "Say with rising tone on 'Ta', then falling on 'Blut'"
+            },
+            {
+                word: "ဝံသးစူၤ",
+                romanized: "Wee Tha Sug",
+                phonetic: "",
+                meaning: "Please",
+                tip: "Both words have low falling tones"
+            },
+            {
+                word: "သးခုလၢထံၣ်လိၥ်ဘၣ်ပသး",
+                romanized: "Tha Kue Lern Hti Ba Na",
+                phonetic: "",
+                meaning: "Nice to meet you",
+                tip: ""
+            },
+            {
+                word: "တၢ်ဖံးတၢ်မၤ",
+                romanized: "Ta Pi Ta Ma",
+                phonetic: "",
+                meaning: "Work",
+                tip: ""
+            },
+            {
+                word: "ကညီကီၢ်",
+                romanized: "Ker Nyaw Kaw",
+                phonetic: "",
+                meaning: "Karen Country",
+                tip: ""
+            },
+            {
+                word: "တၢ်အီၣ်တၢ်အီ",
+                romanized: "Ta Aung Ta Awn",
+                phonetic: "",
+                meaning: "Food",
+                tip: ""
+            },
+            {
+                word: "တၢ်သဘျ့",
+                romanized: "Ta The Blay",
+                phonetic: "",
+                meaning: "Freedom",
+                tip: ""
+            },
+            {
+                word: "နမံၤဒ်လဲၣ်",
+                romanized: "Ner Me De Leh",
+                phonetic: "",
+                meaning: "What is your name?",
+                tip: ""
+            },
+            {
+                word: "ယအိၣ်ဟဲလၢကီၢ်သူလ့ၤ",
+                romanized: "Yer Oh Heh Ler Kawthoolei",
+                phonetic: "",
+                meaning: "I come from Kawthoolei",
+                tip: ""
+            },
+            {
+                word: "နအဲၣ်ဒိးအီၣ်တၢ်မနုၤလဲၣ်",
+                romanized: "Ner Eh Dot Aung Ta Ma Nu Leh",
+                phonetic: "",
+                meaning: "What do you want to eat?",
+                tip: ""
+            },
+            {
+                word: "ယမ့ၢ်ကၠိသရၣ်တဂၤလီၤ",
+                romanized: "Yer May Kyoe Thara Ter Ga Law",
+                phonetic: "",
+                meaning: "I am a teacher",
+                tip: ""
+            },
+            {
+                word: "နကလဲၤဆူလဲၣ်",
+                romanized: "Ner Ker Leh Sue Leh",
+                phonetic: "",
+                meaning: "Where will you go?",
+                tip: ""
+            }
+        ];
+
+        // Pronunciation audio files mapping
+        const pronunciationAudios = {
+            "ဂီၤလၢအဂ့ၤ": "audio/good morning.mp3",
+            "ဟါလၢအဂ့ၤ": "audio/good evening.mp3",
+            "တၢ်အဲၣ်": "audio/love.mp3",
+            "တၢ်ဘျုး": "audio/thank you.mp3",
+            "ဝံသးစူၤ": "audio/please.mp3",
+            "နကလဲၤဆူလဲၣ်": "audio/.mp3",
+            "ယမ့ၢ်ကၠိသရၣ်တဂၤလီၤ": "audio/.mp3",
+            "နအဲၣ်ဒိးအီၣ်တၢ်မနုၤလဲၣ်": "audio/.mp3",
+            "ယအိၣ်ဟဲလၢကီၢ်သူလ့ၤ": "audio/.mp3",
+            "နမံၤဒ်လဲၣ်": "audio/.mp3",
+            "တၢ်သဘျ့": "audio/.mp3",
+            "တၢ်အီၣ်တၢ်အီ": "audio/.mp3",
+            "ကညီကီၢ်": "audio/.mp3",
+            "တၢ်ဖံးတၢ်မၤ": "audio/.mp3",
+            "သးခုလၢထံၣ်လိၥ်ဘၣ်ပသး": "audio/.mp3"
+        };
+
+        const exercises = [
+            {
+                sentence: "Complete: <span class='karen-text'>အ၀ဲစံးဘျုးယၤစံးဝဲ _____</span> (He thanks me and said  _____)",
+                romanized: "Ta Blut _____",
+                answer: "တၢ်ဘျုး",
+                answerRomanized: "Ta Blut",
+                options: ["အိၣ်ဆူၣ်အိၣ်ချ့", "တၢ်ဘျုး", "အါပူၤ"]
+            },
+            {
+                sentence: "How do you say 'Thank you'? _____",
+                romanized: "_____",
+                answer: "တၢ်ဘျုး",
+                answerRomanized: "Ta Blut",
+                options: ["ကညီ", "ဂီၤလၢအဂ့ၤ", "တၢ်ဘျုး"]
+            },
+            {
+                sentence: "Complete the greeting: <span class='karen-text'>_____ လၢအဂ့ၤ</span>",
+                romanized: "_____ Lun A Gay",
+                answer: "ဂီၤ",
+                answerRomanized: "Gaw",
+                options: ["ဂီၤ", "ဝါ", "နံၤ"]
+            }
+        ];
+
+        const quizzes = [
+            {
+                question: "What does <span class='karen-text'>\"ဂီၤလၢအဂ့ၤ\"</span> (Gaw Lun A Gay) mean?",
+                options: ["Good Morning", "Good Evening", "Thank you", "Please"],
+                correct: 0
+            },
+            {
+                question: "How do you say 'Good Evening' in Karen?",
+                options: ["ဂီၤလၢအဂ့ၤ (Gaw Lun A Gay)", "ဟါလၢအဂ့ၤ (Ha Lun A Gay)", "တၢ်ဘျုး (Ta Blut)", "ဝံသးစူၤ (Wee Tha Sug)"],
+                correct: 1
+            },
+            {
+                question: "What does <span class='karen-text'>\"တၢ်အဲၣ်\"</span> (Ta Eh) mean?",
+                options: ["Water", "Food", "Love", "Mother"],
+                correct: 2
+            },
+            {
+                question: "Which word means 'Thank you' in Karen?",
+                options: ["တၢ်ဘျုး (Ta Blut)", "ကညီ (Ka Nyaw)", "တၢ်အဲၣ် (Ta Eh)", "ဂီၤလၢအဂ့ၤ (Gaw Lun A Gay)"],
+                correct: 0
+            },
+            {
+                question: "<span class='karen-text'>\"သးခုလၢထံၣ်ဘၣ်နၤ\"</span> (Tha Kue Lun Htee Ba Na) mean?",
+                options: ["I love you", "Nice to meet you", "You are my friend", "Please follow me"],
+                correct: 1
+            },
+            {
+                question: "<span class='karen-text'>\"သ့ၣ်ညါလၢယအိၣ်ခိးနၤထီဘိဖဲ\"</span> (Thay Nyaw Ler Yer Oh Koke Na Taw Boe Peh) ___",
+                options: ["တၢ်အဲၣ်", "ဝံသးစူၤ", "ကညီဖိ", "ကညီကီၢ်"],
+                correct: 3
+            }
+        ];
+
+        let currentCard = 0;
+        let currentExercise = 0;
+        let currentPronunciation = 0;
+        let currentQuiz = 0;
+        let isCardFlipped = false;
+        let selectedAnswer = -1;
+        let score = 0;
+        let progress = 0;
+
+        // Initialize the application
+        function init() {
+            showSection('vocabulary');
+            updateProgress();
+            updateFlashcard();
+        }
+
+        // Section switching
+        function showSection(sectionName) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.add('hidden');
+            });
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active', 'text-green-600', 'border-green-600');
+            });
+
+            document.getElementById(sectionName + '-section').classList.remove('hidden');
+            event.target.classList.add('active', 'text-green-600', 'border-green-600');
+
+            // Update content when switching sections
+            if (sectionName === 'pronunciation') {
+                updatePronunciation();
+            } else if (sectionName === 'exercise') {
+                updateExercise();
+            } else if (sectionName === 'quiz') {
+                updateQuiz();
+            }
+        }
+
+        // Vocabulary functions
+        function updateFlashcard() {
+            const card = vocabulary[currentCard];
+            document.getElementById('word-display').textContent = card.word;
+            document.getElementById('phonetic-display').textContent = card.romanized;
+            document.getElementById('meaning-display').textContent = isCardFlipped ? card.meaning : "Click to reveal meaning";
+        }
+
+        function toggleCard() {
+            isCardFlipped = !isCardFlipped;
+            updateFlashcard();
+        }
+
+        function nextCard() {
+            currentCard = (currentCard + 1) % vocabulary.length;
+            isCardFlipped = false;
+            updateFlashcard();
+        }
+
+        function previousCard() {
+            currentCard = (currentCard - 1 + vocabulary.length) % vocabulary.length;
+            isCardFlipped = false;
+            updateFlashcard();
+        }
+
+        // Exercise functions
+        function updateExercise() {
+            const exercise = exercises[currentExercise];
+            document.getElementById('exercise-sentence').innerHTML = exercise.sentence +
+                ' <input type="text" id="exercise-input" class="inline-block w-32 px-2 py-1 border-b-2 border-green-500 bg-transparent text-center focus:outline-none focus:border-green-700" placeholder="____">';
+            document.getElementById('exercise-feedback').innerHTML = '';
+        }
+
+        function checkExercise() {
+            const input = document.getElementById('exercise-input').value.trim();
+            const exercise = exercises[currentExercise];
+            const feedback = document.getElementById('exercise-feedback');
+
+            // Check both Karen script and romanized versions
+            if (input === exercise.answer || input.toLowerCase() === exercise.answerRomanized.toLowerCase()) {
+                feedback.innerHTML = `<div class="text-green-600 font-semibold">✓ Correct! <span class="karen-text">${exercise.answer}</span> (${exercise.answerRomanized})</div>`;
+                feedback.classList.add('correct-answer');
+                score += 10;
+                updateProgress();
+            } else {
+                feedback.innerHTML = `<div class="text-red-600 font-semibold">✗ Try again! The correct answer is: <span class="karen-text">${exercise.answer}</span> (${exercise.answerRomanized})</div>`;
+                feedback.classList.add('wrong-answer');
+            }
+
+            setTimeout(() => {
+                feedback.classList.remove('correct-answer', 'wrong-answer');
+            }, 1000);
+        }
+
+        function nextExercise() {
+            currentExercise = (currentExercise + 1) % exercises.length;
+            updateExercise();
+        }
+
+        // Pronunciation functions
+        function updatePronunciation() {
+            const word = vocabulary[currentPronunciation];
+            document.getElementById('pronunciation-word').textContent = word.word;
+            document.getElementById('pronunciation-romanized').textContent = word.romanized;
+            document.getElementById('pronunciation-phonetic').textContent = word.phonetic;
+            document.getElementById('pronunciation-meaning').textContent = word.meaning;
+            document.getElementById('pronunciation-tip').innerHTML = `<p><strong>Breaking it down:</strong> ${word.tip}</p><p class="text-sm mt-2">The tones are very important in Karen language!</p>`;
+        }
+
+        function playKarenAudio() {
+            const currentWord = vocabulary[currentPronunciation].word;
+            const audioElement = document.getElementById('karen-audio');
+
+            // Check if we have a specific audio file for this word
+            if (pronunciationAudios[currentWord]) {
+                audioElement.src = pronunciationAudios[currentWord];
+                audioElement.play().catch(e => console.log("Audio play failed:", e));
+            } else {
+                // Fallback to speech synthesis if no audio file
+                const word = vocabulary[currentPronunciation];
+                const utterance = new SpeechSynthesisUtterance(word.romanized);
+                utterance.rate = 0.6;
+                utterance.pitch = 1.1;
+                utterance.volume = 0.8;
+
+                const voices = speechSynthesis.getVoices();
+                const asianVoice = voices.find(voice =>
+                    voice.lang.includes('zh') || voice.lang.includes('th') || voice.lang.includes('my')
+                );
+
+                if (asianVoice) {
+                    utterance.voice = asianVoice;
+                }
+
+                speechSynthesis.speak(utterance);
+            }
+
+            // Visual feedback
+            const button = event.target;
+            button.classList.add('animate-pulse');
+            setTimeout(() => {
+                button.classList.remove('animate-pulse');
+            }, 2000);
+        }
+
+        function nextPronunciation() {
+            currentPronunciation = (currentPronunciation + 1) % vocabulary.length;
+            updatePronunciation();
+        }
+
+        function previousPronunciation() {
+            currentPronunciation = (currentPronunciation - 1 + vocabulary.length) % vocabulary.length;
+            updatePronunciation();
+        }
+
+        // Quiz functions
+        function updateQuiz() {
+            const quiz = quizzes[currentQuiz];
+            document.getElementById('quiz-question').innerHTML = quiz.question;
+
+            const optionsContainer = document.getElementById('quiz-options');
+            optionsContainer.innerHTML = '';
+
+            quiz.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.onclick = () => selectAnswer(index);
+                button.className = 'quiz-option w-full text-left p-3 rounded-lg bg-white border-2 border-gray-200 hover:border-purple-500 transition-colors';
+                button.innerHTML = `${String.fromCharCode(65 + index)}) ${option}`;
+                optionsContainer.appendChild(button);
+            });
+
+            selectedAnswer = -1;
+            document.getElementById('quiz-feedback').innerHTML = '';
+        }
+
+        function selectAnswer(index) {
+            selectedAnswer = index;
+            document.querySelectorAll('.quiz-option').forEach((option, i) => {
+                option.classList.remove('border-purple-500', 'bg-purple-50');
+                if (i === index) {
+                    option.classList.add('border-purple-500', 'bg-purple-50');
+                }
+            });
+        }
+
+        function submitQuiz() {
+            if (selectedAnswer === -1) return;
+
+            const quiz = quizzes[currentQuiz];
+            const feedback = document.getElementById('quiz-feedback');
+
+            if (selectedAnswer === quiz.correct) {
+                feedback.innerHTML = '<div class="text-green-600 font-semibold">✓ Correct! Well done!</div>';
+                score += 20;
+                updateProgress();
+            } else {
+                feedback.innerHTML = `<div class="text-red-600 font-semibold">✗ Incorrect. The correct answer is: ${quiz.options[quiz.correct]}</div>`;
+            }
+        }
+
+        function nextQuiz() {
+            currentQuiz = (currentQuiz + 1) % quizzes.length;
+            updateQuiz();
+        }
+
+        // Progress tracking
+        function updateProgress() {
+            progress = Math.min(100, (score / 300) * 100);
+            document.getElementById('progress-bar').style.width = progress + '%';
+            document.getElementById('progress-text').textContent = Math.round(progress) + '% Complete';
+            document.getElementById('score').textContent = score;
+
+            // Update statistics
+            document.getElementById('words-learned').textContent = Math.min(vocabulary.length, Math.floor(score / 15) + 1);
+            document.getElementById('exercises-completed').textContent = Math.floor(score / 25);
+            document.getElementById('quiz-accuracy').textContent = Math.min(100, Math.floor((score / 300) * 100) + 15) + '%';
+        }
+
+        // Initialize when page loads
+        window.onload = init;
+    </script>
+</body>
+
+</html>

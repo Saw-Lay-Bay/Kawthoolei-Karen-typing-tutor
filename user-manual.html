@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Karen Language Learning - User Manual</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans', sans-serif;
+        }
+
+        .karen-text {
+            font-family: 'Noto Sans', Arial, sans-serif;
+            direction: rtl;
+            text-align: right;
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .text-shadow {
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .expandable-text {
+            max-height: 600px;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+        }
+
+        .expandable-text.collapsed {
+            max-height: 600px;
+        }
+
+        .expandable-text.expanded {
+            max-height: none;
+        }
+
+        .text-fade {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+            padding-top: 30px;
+            background: linear-gradient(transparent, rgba(255, 255, 255, 0.9), white);
+            margin-top: -60px;
+            z-index: 10;
+            transition: opacity 0.3s ease;
+        }
+
+        .text-fade.hidden {
+            display: none;
+        }
+
+        .see-more-btn,
+        .see-less-btn {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+        }
+
+        .see-more-btn:hover,
+        .see-less-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4);
+        }
+
+        .see-less-btn {
+            margin-top: 30px;
+            margin-bottom: 10px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .expandable-text {
+                max-height: 400px;
+            }
+
+            .expandable-text.collapsed {
+                max-height: 400px;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-to-br from-blue-50 to-purple-50 min-h-screen mx-2">
+    <!-- Header -->
+    <header class="gradient-bg text-white shadow-lg sticky top-0 z-50 flex">
+        <div class="container mx-auto px-4 py-4 flex ">
+            <div class="flex items-center justify-between mx-[10%]">
+                <div class="flex items-center space-x-4 ">
+                    <img src="karen flag.png" alt="Karen Language Learning Logo"
+                        class="w-22 h-12 object-contain rounded-lg">
+                    <h1 class="text-2xl md:text-3xl font-bold text-gray-800 karen-text text-shadow">
+                        တၢ်သူကညီပှၥ်ယဲၤကွီၤအလံၥ်နဲၣ်ကျဲ
+                    </h1>
+                </div>
+            </div>
+            <div class="flex justify-center items-center  ml-[15%]">
+                <div class="px-8 text-lg font-semibold mr-2">
+                    <a href="index.html" class="hover:bg-blue-200 hover:rounded-lg hover:text-black py-2 px-4">Home</a>
+                </div>
+                <div class="px-8 text-lg font-semibold mr-2">
+                    <a href="#" class="hover:bg-blue-200 hover:rounded-lg hover:text-black py-2 px-4">About</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-2">
+        <!-- First Text Section -->
+        <section class="mb-4">
+            <div class="bg-white rounded-xl shadow-lg p-8 mx-[10%] relative">
+                <div class="expandable-text collapsed" id="firstTextSection">
+                    <div class="karen-text text-gray-700 leading-relaxed text-base md:text-lg text-left">
+                        <p class="mb-4">
+                            Kawthoolei Karen Typing ဖြိၣ်ကြဲၢ်တခါအံၤ
+                            ဘၣ်တၢ်ဒုးအိၣ်ထီၣ်အီၤဒီးကယၢကယဲအီၤဒ်သိးကညီဖိတဖၣ်ကသ့ဒိဝဲကညီကျိၥ်လၢ ခီၣ်ဖၠူထၢၣ် (Computer)
+                            ဒီးအါန့ၣ်အန့ၣ်
+                            ကလုၥ်အဂၤလၢအသးအိၣ်မၤလိကညီကျိၥ်တဖၣ်အဂီၢ်လီၤ. လံၥ်နဲၣ်ကျဲအံၤကဒုးနဲၣ်နၤကျဲလၢနကသူ၀ဲ
+                            ဖြိၣ်ကြဲၢ်တခါအံၤမ့ၢ်ဂ့ၤ, တၢ်လၢနကဘၣ်ပၥ်သူၣ်ပၥ်သးလၢတၢ်ကမၣ်လၢအက
+                            ကဲထီၣ်အသးဖဲနသူအီၤအခါမ့ၢ်ဂ့ၤ, ဒီးကတဲပၥ်ဆိနၤလၢတၢ်ဂံၢ်စၢ်ဘါစၢ်လၢနတၢ်သူဝဲ
+                            ဖြိၣ်ကြဲၢ်တခါအံၤန့ၣ်လီၤ.
+                        </p>
+                        <p class="mb-4">
+                            ၁. ဖြိၣ်ကြဲၢ်တခါအံၤ တၢ်တ့ထီၣ်အီၤအခီၣ်ထံးတဘျီအဃိတၢ်ကမူၤကမၣ်တဖၣ်ကအိၣ်၀ဲလီၤ.
+                            ဘၣ်ဆၣ်ပှၤသူတၢ်ဖိတဖၣ်ကဘၣ်နၢ်ပၢၢ်တၢ်အိၣ်သးဒီးအလီၢ်မ့ၢ်အိၣ်လၢကဘၣ်မၤဂ့ၤထီၣ်
+                            မ့ၢ်ဂ့ၤ, ဆီတလဲမ့ၢ်ဂ့ၤန့ၣ်ကဆဲးကျိး, မ့တမ့ၢ်ပၥ်ဖျါတၢ်ဟ့ၣ်ကူၣ်ဟ့ၣ်ဖးဖဲပှၤတ့ထီၣ်တၢ်ဖိအ
+                            ပှၤဂ့ၢ်ဝီပှၥ်ယဲၤကဘျံးပၤ Facebook ဒ်သိးပှၤတ့ထီၣ်တၢ်ဖိကကွၢ်ထံမၤဂ့ၤထီၣ်အီၤဆူညါကွ့ၢ်ကွ့ၢ်အဂီၢ်.
+                        </p>
+                        <p class="mb-4">
+                            ၂. ခီဖျိလၢဖြိၣ်ကြဲၢ်တခါအံၤ ဘၣ်တၢ်တီၣ်ထီၣ်အီၤတမ့ၢ်လၢ Pro Domain ဘၣ်အဃိ,
+                            ပတန့ၢ်ဘၣ်တၢ်လီၢ်လီၤလီၤဆီဆီလၢပကပၥ်ဃၥ်ပတၢ်ဂ့ၢ်တၢ်ကျိၤ dynamically ဒ်အမ့ၢ် Review, Comment
+                            တဖၣ်ဘၣ်. ပှၤတ့ထီၣ်တၢ်ဖိသူဒၣ် မံၤသဘျ့ Free Domain ခီဖျိဟံသူဝဲ GitHub.com အဃိ
+                            အဆိကတၢၢ်ဖြိၣ်ကြဲၢ်အံၤကမၤစၢၤဒၣ်ပှၤသူတၢ်ဖိလၢကမၤလိသ့အသးအဂီၢ်လီၤ. ဆူညါခီအဂီၢ်စ့မ့အိၣ်တခီ
+                            ပှၤတ့ထီၣ်တၢ်ဖိသူဒၣ်တၢ်
+                            ဖိအိၣ်ဒီးတၢ်တိၥ်လၢကပှ့ၤသူ Domain ဒီး Hostname ဒ်သိးတၢ်ခဲလၢၥ်ကလဲၤအသးဘျ့ဘျ့ဆှီဆှီအဂီၢ်လီၤ.
+                        </p>
+                        <p class="mb-4">
+                            ၃. ခီဖျိလၢကီၢ်သူလ့ၤကညီကျိၥ်အံၤတၢ်ဂဲၤလိၥ်အဖီခိၣ်, တၢ်ခဲလၢၥ်ဃၥ်ဃၥ်လဲၤအသးလၢအဂ့ၢ်အဝီလံအသိး
+                            ပှၤအါဂၤ Install လီၤဝဲ Kawthoolei Keyboard ဆူအလီတဲစိအပူၤ Phone အဂီၢ် နုၥ်လီၤကွၢ်ဘၣ်ဖဲ <a
+                                href="https://unicode.kawthoolei.app/" class="hover:text-red-400"><u>Kawthoolei
+                                    Unicode.Kawthoolei.app</u></a>
+                            အပှၥ်ယဲၤကွီၤတက့ၢ်. မ့မ့ၢ်လၢနကဘၣ် Install အီၤဒ်လဲၣ်န့ၣ်နနုၥ်လီၤကွၢ်ဖဲ <a
+                                href="https://www.youtube.com/watch?v=ytROMx9HOQU" class="hover:text-red-400"><u>Knyaw
+                                    Academy Youtube</u></a>
+                            န့ၣ်တက့ၢ်.
+                        </p>
+                        <p class="mb-4">
+                            ၄. လၢတၢ်ကဒိကညီကျိၥ်အဂီၢ်(Computer) တခါလၢ်လၢ်န့ၣ် ကြၢးဝဲဘၣ်ဝဲလီၤ.
+                            မ့မ့ၢ်လၢတၢ်အဂၤဒ်အမ့ၢ်တၢ်မၤလိကညီကျိၥ်တဖၣ်န့ၣ် ပမ့ၢ်သူလီတဲစိသနၥ်က့ပသူသ့၀ဲဒၣ်န့ၣ်လီၤ.
+                        </p>
+                        <p class="mb-4">
+                            ၅. တၢ်လၢကဘၣ်မၤပှဲၤ, မၤဂ့ၤထီၣ်တဖၣ်ပကကျဲးစၢးမၤဂ့ၤအီၤကယီကယီဒ်အလီၢ်အိၣ်အသိးန့လီၤ.
+                            မ်ပှၤမၤလိတၢ်ဖိကိးဂၤကပှဲၤဒီးတၢ်သူၣ်မံသးမုၥ်တက့ၢ်.
+                        </p>
+                    </div>
+                </div>
+                <div class="text-fade" id="firstTextFade">
+                    <button class="see-more-btn" onclick="toggleText('firstTextSection')">
+                        See More...
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Second Text Section -->
+        <section class="mb-4">
+            <div class="bg-white rounded-xl shadow-lg p-8 mx-[10%] relative">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Additional Information</h2>
+                <div class="expandable-text collapsed" id="secondTextSection">
+                    <div class="text-gray-700 leading-relaxed text-base md:text-lg">
+                        <p class="mb-4">
+                            This Karen Language Learning platform is designed to help preserve and promote the Karen
+                            language for future generations. The website includes comprehensive learning materials,
+                            audio
+                            recordings, video lessons, and interactive exercises.
+
+                            Each lesson is carefully structured to build upon previous knowledge, starting from basic
+                            vocabulary and pronunciation to more complex grammar structures. The platform supports both
+                            S'gaw Karen and Pwo Karen dialects.
+
+                            Regular practice using the provided materials will help learners develop proficiency in
+                            reading,
+                            writing, speaking, and understanding the Karen language. The video lessons feature native
+                            speakers to ensure authentic pronunciation and cultural context.
+                        </p>
+                        <p class="mb-4">
+                            We encourage learners to practice daily and engage with the community through our discussion
+                            forums. Cultural context and traditional stories are integrated throughout the lessons to
+                            provide a rich learning experience.
+
+                            The Karen language has a rich history spanning centuries, with various dialects spoken
+                            across
+                            different regions. Our platform focuses on the most commonly spoken varieties while
+                            respecting
+                            the linguistic diversity within the Karen community.
+
+                            Learning materials are organized into progressive levels, from beginner to advanced,
+                            allowing
+                            learners to advance at their own pace. Each level includes vocabulary building, grammar
+                            instruction, cultural insights, and practical conversation practice.
+                        </p>
+                    </div>
+                </div>
+                <div class="text-fade" id="secondTextFade">
+                    <button class="see-more-btn" onclick="toggleText('secondTextSection')">
+                        See More...
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="gradient-bg text-white py-4 mt-4">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-lg font-medium">
+                © Saw Lay Bay (KDHW) All rights reserved!
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Expandable text functionality
+        function toggleText(sectionId) {
+            const section = document.getElementById(sectionId);
+            const fadeElement = document.getElementById(sectionId.replace('Section', 'Fade'));
+            const isExpanded = section.classList.contains('expanded');
+
+            if (isExpanded) {
+                // Collapse
+                section.classList.remove('expanded');
+                section.classList.add('collapsed');
+                fadeElement.classList.remove('hidden');
+                fadeElement.querySelector('button').textContent = 'See More...';
+                fadeElement.querySelector('button').className = 'see-more-btn';
+            } else {
+                // Expand
+                section.classList.remove('collapsed');
+                section.classList.add('expanded');
+                fadeElement.classList.add('hidden');
+
+                // Add "See Less" button
+                setTimeout(() => {
+                    if (!section.querySelector('.see-less-btn')) {
+                        const seeLessBtn = document.createElement('button');
+                        seeLessBtn.className = 'see-less-btn';
+                        seeLessBtn.textContent = 'See Less';
+                        seeLessBtn.onclick = () => toggleText(sectionId);
+                        section.appendChild(seeLessBtn);
+                    }
+                }, 500);
+            }
+        }
+
+        // Check if text needs "See More" button on load
+        function checkTextHeight() {
+            const sections = ['firstTextSection', 'secondTextSection'];
+
+            sections.forEach(sectionId => {
+                const section = document.getElementById(sectionId);
+                const fadeElement = document.getElementById(sectionId.replace('Section', 'Fade'));
+
+                // Temporarily remove height constraint to measure
+                section.style.maxHeight = 'none';
+                const fullHeight = section.scrollHeight;
+                section.style.maxHeight = '';
+
+                const maxHeight = window.innerWidth >= 768 ? 600 : 400;
+
+                if (fullHeight <= maxHeight) {
+                    fadeElement.style.display = 'none';
+                } else {
+                    fadeElement.style.display = 'flex';
+                }
+            });
+        }
+
+        // Handle window resize
+        window.addEventListener('resize', function () {
+            checkTextHeight();
+        });
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            checkTextHeight();
+        });
+    </script>
+</body>
+
+</html>

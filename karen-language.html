@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learn Karen Language</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        .viewport-container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .nav-section {
+            flex-shrink: 0;
+            padding: 1rem;
+        }
+
+        .title-section {
+            flex-shrink: 0;
+            padding: 1rem 0;
+        }
+
+        .slider-section {
+            flex: 1;
+            min-height: 0;
+            padding: 0 1rem 1rem;
+        }
+
+        .slider-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .slider-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .slide.active {
+            opacity: 1;
+        }
+
+        .slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center 25%;
+            transform: none;
+        }
+
+        .slide-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .nav-dots {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 10;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .dot.active {
+            background: white;
+            transform: scale(1.2);
+        }
+
+        .nav-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-arrow:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .nav-arrow.prev {
+            left: 20px;
+        }
+
+        .nav-arrow.next {
+            right: 20px;
+        }
+
+        .float-animation {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .typing-cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1.5rem;
+            background-color: #3b82f6;
+            margin-left: 2px;
+            animation: cursor-blink 1s infinite;
+        }
+
+        @keyframes cursor-blink {
+
+            0%,
+            50% {
+                opacity: 1;
+            }
+
+            51%,
+            100% {
+                opacity: 0;
+            }
+        }
+
+        .star {
+            position: fixed;
+            color: #fbbf24;
+            animation: star-twinkle 2s infinite;
+            z-index: 1;
+        }
+
+        @keyframes star-twinkle {
+
+            0%,
+            100% {
+                opacity: 0.3;
+                transform: scale(0.5);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.2);
+            }
+        }
+
+        .star:nth-child(1) {
+            top: 10%;
+            left: 20%;
+            animation-delay: 0s;
+        }
+
+        .star:nth-child(2) {
+            top: 20%;
+            left: 70%;
+            animation-delay: 0.5s;
+        }
+
+        .star:nth-child(3) {
+            top: 40%;
+            left: 10%;
+            animation-delay: 1s;
+        }
+
+        .star:nth-child(4) {
+            top: 60%;
+            left: 80%;
+            animation-delay: 1.5s;
+        }
+
+        .star:nth-child(5) {
+            top: 80%;
+            left: 30%;
+            animation-delay: 2s;
+        }
+
+        .star:nth-child(6) {
+            top: 30%;
+            left: 50%;
+            animation-delay: 2.5s;
+        }
+
+        /* Alert Overlay Styles */
+        .alert-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .alert-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .alert-popup {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: white;
+            padding: 20px 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            z-index: 1001;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            min-width: 200px;
+        }
+
+        .alert-popup.active {
+            transform: translateX(0);
+        }
+
+        .alert-popup h3 {
+            margin: 0 0 10px 0;
+            color: #333;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .alert-popup p {
+            margin: 0;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .alert-close {
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: #999;
+            cursor: pointer;
+            padding: 0;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .alert-close:hover {
+            color: #333;
+        }
+    </style>
+</head>
+
+<body class="gradient-bg">
+    <!-- Alert Overlay -->
+    <div class="alert-overlay" id="alertOverlay" onclick="closeAlert()">
+        <div class="alert-popup" id="alertPopup" onclick="event.stopPropagation()">
+            <button class="alert-close" onclick="closeAlert()">&times;</button>
+            <h3 id="alertTitle">Title</h3>
+            <p id="alertMessage">Message</p>
+        </div>
+    </div>
+
+    <!-- Background Stars -->
+    <div class="star text-2xl">★</div>
+    <div class="star text-xl">✦</div>
+    <div class="star text-lg">★</div>
+    <div class="star text-xl">✦</div>
+    <div class="star text-2xl">★</div>
+    <div class="star text-lg">✦</div>
+
+    <div class="viewport-container">
+        <!-- Navigation Section -->
+        <nav class="nav-section relative z-20 ">
+            <div class="flex items-center justify-between">
+                <!-- Logo -->
+                <div class="flex items-center space-x-4">
+                    <div
+                        class="w-16 h-16 bg-white bg-opacity-20 rounded-lg flex items-center justify-center float-animation">
+                        <span class="text-2xl">📚</span>
+                    </div>
+                    <div class="text-white">
+                        <h1 class="text-xl font-bold">Karen Language</h1>
+                        <p class="text-sm opacity-80">Learning Center</p>
+                    </div>
+                </div>
+
+                <!-- Navigation Links -->
+                <div class="flex items-center space-x-4">
+                    <a href="index.html" class="text-white hover:text-blue-200 transition-colors">Home</a>
+                    <a href="lessons.html" class="text-white hover:text-blue-200 transition-colors">Lessons</a>
+                    <a href="#" class="text-white hover:text-blue-200 transition-colors"
+                        onclick="showAlert('Practice', 'Practice section is coming soon!<br>Practice အဂီၢ်အိၣ်ခိးကွၢ်လၢ်တက့ၢ်.တယံၥ်ဘၣ်ကဟဲလီၤ')">
+                        Practice
+                    </a>
+
+                    <button
+                        class="bg-white bg-opacity-20 text-white px-4 py-2 rounded-lg hover:bg-opacity-30 transition-all"
+                        onclick="showAlert('Start Learning', 'Start Learning will make your learning journey perfect soon!<br>တယံၥ်လၢၤဘၣ်န့ၣ်နကလဲၤဟးလိၥ်ကွဲဘၣ်လၢကီၢ်သူလ့ၤဒီးကတိၤကညီကျိၥ်ဒံးပှၤထူလံၤဖိအသိးလီၤ.')">
+                        Start Learning
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Title Section -->
+        <div class="title-section text-center relative z-20">
+            <h1 class="text-4xl md:text-5xl font-bold text-white mb-2 float-animation"
+                style="text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);">
+                Learn Karen Language
+            </h1>
+            <p class="text-xl text-blue-100" style="text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);">
+                Discover the beauty of Karen culture through interactive lessons
+            </p>
+        </div>
+
+        <!-- Slider Section -->
+        <div class="slider-section relative z-20">
+            <div class="slider-container">
+                <div class="slider-wrapper">
+                    <!-- Slide 1 -->
+                    <div class="slide active">
+                        <img src="Image/1.jpg" alt="Karen Culture" />
+                        <div class="slide-content">
+                            <h3 class="text-2xl font-bold mb-2">Karen Culture & Heritage</h3>
+                            <p class="text-lg">Explore the rich cultural traditions of the Karen people</p>
+                        </div>
+                    </div>
+
+                    <!-- Slide 2 -->
+                    <div class="slide">
+                        <img src="Image/2.jpg" alt="Karen Language" />
+                        <div class="slide-content">
+                            <h3 class="text-2xl font-bold mb-2">Learn Karen Script</h3>
+                            <p class="text-lg">Master the beautiful Karen writing system step by step</p>
+                        </div>
+                    </div>
+
+                    <!-- Slide 3 -->
+                    <div class="slide">
+                        <img src="Image/3.jpg" alt="Karen Learning" />
+                        <div class="slide-content">
+                            <h3 class="text-2xl font-bold mb-2">Interactive Lessons</h3>
+                            <p class="text-lg">Engage with multimedia content and practical exercises</p>
+                        </div>
+                    </div>
+
+                    <!-- Slide 4 -->
+                    <div class="slide">
+                        <img src="Image/6.jpg" alt="Karen Community" />
+                        <div class="slide-content">
+                            <h3 class="text-2xl font-bold mb-2">Community Learning</h3>
+                            <p class="text-lg">Join fellow learners in your language journey</p>
+                        </div>
+                    </div>
+
+                    <!-- Slide 5 -->
+                    <div class="slide">
+                        <img src="Image/12.jpg" alt="Karen Progress" />
+                        <div class="slide-content">
+                            <h3 class="text-2xl font-bold mb-2">Track Your Progress</h3>
+                            <p class="text-lg">Monitor your learning journey with detailed progress tracking</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation Arrows -->
+                <button class="nav-arrow prev" onclick="changeSlide(-1)">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M15 18l-6-6 6-6" />
+                    </svg>
+                </button>
+                <button class="nav-arrow next" onclick="changeSlide(1)">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 18l6-6-6-6" />
+                    </svg>
+                </button>
+
+                <!-- Navigation Dots -->
+                <div class="nav-dots">
+                    <div class="dot active" onclick="goToSlide(0)"></div>
+                    <div class="dot" onclick="goToSlide(1)"></div>
+                    <div class="dot" onclick="goToSlide(2)"></div>
+                    <div class="dot" onclick="goToSlide(3)"></div>
+                    <div class="dot" onclick="goToSlide(4)"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const dots = document.querySelectorAll('.dot');
+        const totalSlides = slides.length;
+
+        function showSlide(index) {
+            // Hide all slides
+            slides.forEach(slide => slide.classList.remove('active'));
+            dots.forEach(dot => dot.classList.remove('active'));
+
+            // Show current slide
+            slides[index].classList.add('active');
+            dots[index].classList.add('active');
+        }
+
+        function changeSlide(direction) {
+            currentSlide += direction;
+
+            if (currentSlide >= totalSlides) {
+                currentSlide = 0;
+            } else if (currentSlide < 0) {
+                currentSlide = totalSlides - 1;
+            }
+
+            showSlide(currentSlide);
+        }
+
+        function goToSlide(index) {
+            currentSlide = index;
+            showSlide(currentSlide);
+        }
+
+        // Auto-advance slides every 5 seconds
+        setInterval(() => {
+            changeSlide(1);
+        }, 5000);
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') {
+                changeSlide(-1);
+            } else if (e.key === 'ArrowRight') {
+                changeSlide(1);
+            }
+        });
+
+        // Touch/swipe support for mobile
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+
+        function handleSwipe() {
+            if (touchEndX < touchStartX - 50) {
+                changeSlide(1); // Swipe left, go to next
+            }
+            if (touchEndX > touchStartX + 50) {
+                changeSlide(-1); // Swipe right, go to previous
+            }
+        }
+
+        // Alert Functions
+        function showAlert(title, message) {
+            const overlay = document.getElementById('alertOverlay');
+            const popup = document.getElementById('alertPopup');
+            const alertTitle = document.getElementById('alertTitle');
+            const alertMessage = document.getElementById('alertMessage');
+
+            alertTitle.textContent = title;
+            alertMessage.innerHTML = message; // Changed from textContent to innerHTML
+
+            overlay.classList.add('active');
+            popup.classList.add('active');
+
+            // Auto close after 3 seconds
+            setTimeout(() => {
+                closeAlert();
+            }, 5000);
+        }
+
+        function closeAlert() {
+            const overlay = document.getElementById('alertOverlay');
+            const popup = document.getElementById('alertPopup');
+
+            popup.classList.remove('active');
+            overlay.classList.remove('active');
+        }
+    </script>
+</body>
+
+</html>

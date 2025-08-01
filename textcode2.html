@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kawthoolei Karen Typing - Feedback & Reviews</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .karen-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .star-rating {
+            display: flex;
+            gap: 4px;
+        }
+
+        .star {
+            cursor: pointer;
+            color: #d1d5db;
+            transition: color 0.2s;
+        }
+
+        .star.active {
+            color: #fbbf24;
+        }
+
+        .star:hover {
+            color: #f59e0b;
+        }
+
+        .feedback-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+
+<body class="karen-gradient min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-6xl font-bold text-white mb-4">
+                <i class="fas fa-keyboard mr-4"></i>
+                Kawthoolei Karen Typing
+            </h1>
+            <p class="text-xl text-white/90 max-w-2xl mx-auto">
+                Share your experience and help us improve our Karen language typing application
+            </p>
+        </header>
+
+        <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-8">
+            <!-- Feedback Form -->
+            <div class="feedback-card rounded-2xl p-8">
+                <h2 class="text-2xl font-bold text-white mb-6">
+                    <i class="fas fa-comment-dots mr-3"></i>
+                    Share Your Feedback
+                </h2>
+
+                <form id="feedbackForm" class="space-y-6">
+                    <div>
+                        <label class="block text-white/90 font-medium mb-2">Your Name</label>
+                        <input type="text" id="userName" required
+                            class="w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
+                            placeholder="Enter your name">
+                    </div>
+
+                    <div>
+                        <label class="block text-white/90 font-medium mb-2">Email (Optional)</label>
+                        <input type="email" id="userEmail"
+                            class="w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
+                            placeholder="your.email@example.com">
+                    </div>
+
+                    <div>
+                        <label class="block text-white/90 font-medium mb-3">Rate Your Experience</label>
+                        <div class="star-rating text-2xl" id="starRating">
+                            <i class="fas fa-star star" data-rating="1"></i>
+                            <i class="fas fa-star star" data-rating="2"></i>
+                            <i class="fas fa-star star" data-rating="3"></i>
+                            <i class="fas fa-star star" data-rating="4"></i>
+                            <i class="fas fa-star star" data-rating="5"></i>
+                        </div>
+                        <input type="hidden" id="rating" value="0">
+                    </div>
+
+                    <div>
+                        <label class="block text-white/90 font-medium mb-2">Category</label>
+                        <select id="category" required
+                            class="w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400">
+                            <option value="">Select a category</option>
+                            <option value="usability">Usability</option>
+                            <option value="features">Features</option>
+                            <option value="performance">Performance</option>
+                            <option value="bugs">Bug Report</option>
+                            <option value="suggestion">Suggestion</option>
+                            <option value="general">General Feedback</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-white/90 font-medium mb-2">Your Feedback</label>
+                        <textarea id="feedback" required rows="5"
+                            class="w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/60 resize-none focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
+                            placeholder="Tell us about your experience with Kawthoolei Karen Typing..."></textarea>
+                    </div>
+
+                    <button type="submit"
+                        class="w-full bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold py-3 px-6 rounded-lg transition-colors duration-200 transform hover:scale-105">
+                        <i class="fas fa-paper-plane mr-2"></i>
+                        Submit Feedback
+                    </button>
+                </form>
+            </div>
+
+            <!-- Reviews Display -->
+            <div class="feedback-card rounded-2xl p-8">
+                <h2 class="text-2xl font-bold text-white mb-6">
+                    <i class="fas fa-star mr-3"></i>
+                    Recent Reviews
+                </h2>
+
+                <div id="reviewsList" class="space-y-6">
+                    <!-- Sample reviews -->
+                    <div class="bg-white/10 rounded-lg p-4 border border-white/20">
+                        <div class="flex items-center justify-between mb-2">
+                            <h4 class="font-semibold text-white">Saw Eh Htoo</h4>
+                            <div class="flex text-yellow-400">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                        <p class="text-white/80 text-sm mb-2">Usability • 2 days ago</p>
+                        <p class="text-white/90">This typing application is excellent for learning Karen script! Very
+                            user-friendly and accurate.</p>
+                    </div>
+
+                    <div class="bg-white/10 rounded-lg p-4 border border-white/20">
+                        <div class="flex items-center justify-between mb-2">
+                            <h4 class="font-semibold text-white">Naw Paw</h4>
+                            <div class="flex text-yellow-400">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="far fa-star"></i>
+                            </div>
+                        </div>
+                        <p class="text-white/80 text-sm mb-2">Features • 1 week ago</p>
+                        <p class="text-white/90">Great tool for preserving our Karen language. Would love to see more
+                            font options in future updates.</p>
+                    </div>
+
+                    <div class="bg-white/10 rounded-lg p-4 border border-white/20">
+                        <div class="flex items-center justify-between mb-2">
+                            <h4 class="font-semibold text-white">Thara John</h4>
+                            <div class="flex text-yellow-400">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                        <p class="text-white/80 text-sm mb-2">General • 2 weeks ago</p>
+                        <p class="text-white/90">Perfect for teaching my children how to type in Karen. Thank you for
+                            creating this valuable resource!</p>
+                    </div>
+                </div>
+
+                <div class="mt-6 text-center">
+                    <button id="loadMoreBtn"
+                        class="bg-white/20 hover:bg-white/30 text-white px-6 py-2 rounded-lg transition-colors duration-200">
+                        Load More Reviews
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Section -->
+        <div class="max-w-4xl mx-auto mt-12">
+            <div class="feedback-card rounded-2xl p-8">
+                <h3 class="text-2xl font-bold text-white text-center mb-8">
+                    <i class="fas fa-chart-bar mr-3"></i>
+                    Feedback Statistics
+                </h3>
+                <div class="grid md:grid-cols-4 gap-6 text-center">
+                    <div>
+                        <div class="text-3xl font-bold text-yellow-400 mb-2">4.8</div>
+                        <div class="text-white/80">Average Rating</div>
+                    </div>
+                    <div>
+                        <div class="text-3xl font-bold text-yellow-400 mb-2">247</div>
+                        <div class="text-white/80">Total Reviews</div>
+                    </div>
+                    <div>
+                        <div class="text-3xl font-bold text-yellow-400 mb-2">95%</div>
+                        <div class="text-white/80">Satisfaction Rate</div>
+                    </div>
+                    <div>
+                        <div class="text-3xl font-bold text-yellow-400 mb-2">12</div>
+                        <div class="text-white/80">This Month</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Star rating functionality
+        const stars = document.querySelectorAll('.star');
+        const ratingInput = document.getElementById('rating');
+        let currentRating = 0;
+
+        stars.forEach(star => {
+            star.addEventListener('click', function () {
+                currentRating = parseInt(this.dataset.rating);
+                ratingInput.value = currentRating;
+                updateStars();
+            });
+
+            star.addEventListener('mouseover', function () {
+                const hoverRating = parseInt(this.dataset.rating);
+                updateStars(hoverRating);
+            });
+        });
+
+        document.getElementById('starRating').addEventListener('mouseleave', function () {
+            updateStars();
+        });
+
+        function updateStars(tempRating = null) {
+            const rating = tempRating || currentRating;
+            stars.forEach((star, index) => {
+                if (index < rating) {
+                    star.classList.add('active');
+                } else {
+                    star.classList.remove('active');
+                }
+            });
+        }
+
+        // Form submission
+        document.getElementById('feedbackForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const formData = {
+                name: document.getElementById('userName').value,
+                email: document.getElementById('userEmail').value,
+                rating: document.getElementById('rating').value,
+                category: document.getElementById('category').value,
+                feedback: document.getElementById('feedback').value,
+                timestamp: new Date().toISOString()
+            };
+
+            if (formData.rating === '0') {
+                alert('Please provide a star rating before submitting.');
+                return;
+            }
+
+            // Here you would normally send to a backend service
+            // For now, we'll simulate submission and add to local reviews
+            submitFeedback(formData);
+        });
+
+        function submitFeedback(data) {
+            // Simulate API call
+            setTimeout(() => {
+                // Add new review to the top of the list
+                addNewReview(data);
+
+                // Reset form
+                document.getElementById('feedbackForm').reset();
+                currentRating = 0;
+                updateStars();
+
+                // Show success message
+                showSuccessMessage();
+            }, 1000);
+        }
+
+        function addNewReview(data) {
+            const reviewsList = document.getElementById('reviewsList');
+            const newReview = document.createElement('div');
+            newReview.className = 'bg-white/10 rounded-lg p-4 border border-white/20 opacity-0 transform translate-y-4';
+
+            const starsHtml = Array.from({ length: 5 }, (_, i) =>
+                i < data.rating ? '<i class="fas fa-star"></i>' : '<i class="far fa-star"></i>'
+            ).join('');
+
+            newReview.innerHTML = `
+                <div class="flex items-center justify-between mb-2">
+                    <h4 class="font-semibold text-white">${data.name}</h4>
+                    <div class="flex text-yellow-400">
+                        ${starsHtml}
+                    </div>
+                </div>
+                <p class="text-white/80 text-sm mb-2">${data.category} • Just now</p>
+                <p class="text-white/90">${data.feedback}</p>
+            `;
+
+            reviewsList.insertBefore(newReview, reviewsList.firstChild);
+
+            // Animate in
+            setTimeout(() => {
+                newReview.classList.remove('opacity-0', 'translate-y-4');
+                newReview.classList.add('transition-all', 'duration-500');
+            }, 100);
+        }
+
+        function showSuccessMessage() {
+            const successDiv = document.createElement('div');
+            successDiv.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 transform translate-x-full transition-transform duration-300';
+            successDiv.innerHTML = '<i class="fas fa-check-circle mr-2"></i>Feedback submitted successfully!';
+
+            document.body.appendChild(successDiv);
+
+            setTimeout(() => {
+                successDiv.classList.remove('translate-x-full');
+            }, 100);
+
+            setTimeout(() => {
+                successDiv.classList.add('translate-x-full');
+                setTimeout(() => {
+                    document.body.removeChild(successDiv);
+                }, 300);
+            }, 3000);
+        }
+
+        // Load more reviews functionality
+        document.getElementById('loadMoreBtn').addEventListener('click', function () {
+            this.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Loading...';
+
+            setTimeout(() => {
+                this.innerHTML = 'Load More Reviews';
+                // In a real app, you'd fetch more reviews from the server
+            }, 1500);
+        });
+
+        // Initialize
+        updateStars();
+    </script>
+</body>
+
+</html>

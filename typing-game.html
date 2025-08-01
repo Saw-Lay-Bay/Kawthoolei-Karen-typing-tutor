@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Karen Kawthoolei Typing Game</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+
+        .game-font {
+            font-family: 'Orbitron', monospace;
+        }
+
+        .karen-font {
+            font-family: 'Padauk', serif;
+        }
+
+        .input-field {
+            background: linear-gradient(135deg, #374151, #4b5563);
+            border: 3px solid #fbbf24;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: clip;
+        }
+
+        .text-container {
+            white-space: nowrap;
+            text-align: left;
+            position: relative;
+            transition: transform 0.1s ease;
+        }
+
+        .race-track {
+            background: linear-gradient(to bottom,
+                    #4a5568 0%,
+                    #2d3748 50%,
+                    #4a5568 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .track-lines {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image:
+                /* Road markings - dashed white lines */
+                repeating-linear-gradient(to right,
+                    transparent 0px,
+                    transparent 38px,
+                    #ffffff 38px,
+                    #ffffff 42px,
+                    transparent 42px,
+                    transparent 80px),
+                /* Buildings silhouette */
+                linear-gradient(to bottom,
+                    #1a202c 0%,
+                    #2d3748 20%,
+                    transparent 20%),
+                /* City skyline at top */
+                repeating-linear-gradient(to right,
+                    #1a202c 0px,
+                    #1a202c 30px,
+                    #2d3748 30px,
+                    #2d3748 50px,
+                    #4a5568 50px,
+                    #4a5568 80px);
+            background-size:
+                80px 100%,
+                100% 25%,
+                80px 25%;
+            background-position:
+                0 0,
+                0 0,
+                0 0;
+            animation: trackMoveLeft 2s linear infinite;
+        }
+
+        /* City buildings on sides */
+        .track-lines::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 30%;
+            background: repeating-linear-gradient(to right,
+                    #1a202c 0px,
+                    #1a202c 20px,
+                    #2a2a2a 20px,
+                    #2a2a2a 30px,
+                    #1a202c 30px,
+                    #1a202c 50px,
+                    #2d3748 50px,
+                    #2d3748 70px,
+                    #1a202c 70px,
+                    #1a202c 80px);
+            background-size: 80px 100%;
+            opacity: 0.8;
+            animation: trackMoveLeft 2s linear infinite;
+        }
+
+        /* Street lights */
+        .track-lines::after {
+            content: '';
+            position: absolute;
+            top: 25%;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: repeating-linear-gradient(to right,
+                    transparent 0px,
+                    transparent 75px,
+                    #ffeb3b 75px,
+                    #ffeb3b 80px);
+            background-size: 80px 100%;
+            animation: trackMoveLeft 2s linear infinite;
+            opacity: 0.7;
+        }
+
+        /* Updated keyframes for left movement (simulating forward motion) */
+        @keyframes trackMoveLeft {
+            0% {
+                transform: translateX(0);
+            }
+
+            100% {
+                transform: translateX(-80px);
+            }
+        }
+
+        /* Update the keyframe to match the pattern size */
+        @keyframes trackMove {
+            0% {
+                transform: translateX(0);
+            }
+
+            100% {
+                transform: translateX(80px);
+            }
+        }
+
+        @keyframes trackMove {
+            0% {
+                transform: translateX(160px);
+            }
+
+            100% {
+                transform: translateX(0px);
+            }
+        }
+
+        .motorcycle {
+            transition: all 0.2s ease;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .motorcycle.boost {
+            animation: boost 0.3s ease;
+        }
+
+        @keyframes boost {
+            0% {
+                transform: translateY(-50%) scale(1);
+            }
+
+            50% {
+                transform: translateY(-53%) scale(1.03);
+            }
+
+            100% {
+                transform: translateY(-50%) scale(1);
+            }
+        }
+
+        .finish-line {
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            width: 20px;
+            background: repeating-linear-gradient(45deg,
+                    #000,
+                    #000 10px,
+                    #fff 10px,
+                    #fff 20px);
+        }
+
+        .progress-bar {
+            transition: width 0.3s ease;
+        }
+
+        .text-display {
+            background: linear-gradient(135deg, #1e40af, #3b82f6);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .text-container {
+            white-space: nowrap;
+            text-align: left;
+            position: relative;
+        }
+
+        .input-field {
+            background: linear-gradient(135deg, #374151, #4b5563);
+            border: 3px solid #fbbf24;
+        }
+
+        .input-field:focus {
+            border-color: #10b981;
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .correct-feedback {
+            animation: correctFlash 0.3s ease;
+        }
+
+        .wrong-feedback {
+            animation: wrongShake 0.3s ease;
+        }
+
+        @keyframes correctFlash {
+            0% {
+                background: #10b981;
+            }
+
+            100% {
+                background: #374151;
+            }
+        }
+
+        @keyframes wrongShake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-5px);
+            }
+
+            75% {
+                transform: translateX(5px);
+            }
+        }
+
+        .speed-effect {
+            animation-duration: 0.3s;
+        }
+
+        .speed-effect.fast {
+            animation-duration: 0.2s;
+        }
+
+        .speed-effect.very-fast {
+            animation-duration: 0.1s;
+        }
+
+        .typed-char {
+            color: #10b981;
+            background-color: rgba(16, 185, 129, 0.2);
+        }
+
+        .current-char {
+            color: #fbbf24;
+            background-color: rgba(251, 191, 36, 0.3);
+            animation: pulse 1s ease-in-out infinite;
+        }
+
+        .upcoming-char {
+            color: #d1d5db;
+        }
+
+        .error-char {
+            color: #ef4444;
+            background-color: rgba(239, 68, 68, 0.2);
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.7;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-to-br from-gray-900 via-blue-900 to-gray-900 min-h-screen">
+    <div id="gameContainer" class="h-screen flex flex-col overflow-hidden">
+        <!-- Header -->
+        <div class="bg-black bg-opacity-80 p-4">
+            <div class="flex items-center text-white game-font">
+                <!-- Logo + Title (Single Line, No Wrap) -->
+                <div class="whitespace-nowrap text-2xl font-bold text-yellow-400 flex items-center mr-8">
+                    <span class="text-5xl mr-2">🏍️</span>
+                    KAREN KAWTHOOLEI TYPING RACE
+                </div>
+                <div class="justify-center flex items-center h-[40px] min-w-[80px] rounded-xl hover:bg-blue-200 ">
+                    <a href="index.html" class="text-white font-semibold hover:text-red-600">Home</a>
+                </div>
+
+
+                <!-- Stats Section -->
+                <div class="flex flex-col justify-between w-full">
+                    <!-- Top Row: 4 Stats -->
+                    <div class="flex justify-end gap-6">
+                        <div>Lesson: <span id="currentLesson" class="text-purple-400">-</span></div>
+                        <div>Accuracy: <span id="accuracy" class="text-green-400">100</span>%</div>
+                        <div>Correct: <span id="correctCount" class="text-green-400">0</span></div>
+                        <div>Errors: <span id="wrongCount" class="text-red-400">0</span></div>
+                    </div>
+
+                    <!-- Bottom Row: 3 Stats -->
+                    <div class="flex justify-end gap-6 mt-2">
+                        <div>Speed: <span id="speed" class="text-yellow-400">0</span> WPM</div>
+                        <div>Progress: <span id="progress" class="text-green-400">0</span>%</div>
+                        <div>Score: <span id="score" class="text-blue-400">0</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Race Track Section -->
+        <div class="race-track flex-shrink-0 h-32 relative">
+            <div class="track-lines"></div>
+
+            <!-- Progress Bar -->
+            <div class="absolute bottom-0 left-0 right-0 h-2 bg-gray-700">
+                <div id="progressBar" class="progress-bar h-full bg-gradient-to-r from-green-400 to-blue-400"
+                    style="width: 0%"></div>
+            </div>
+
+            <!-- Motorcycle -->
+            <div id="motorcycle" class="motorcycle " style="left: 100px;">
+                <img src="Image/motorcycle-right.png" alt="Motorcycle" class="w-24 h-16">
+            </div>
+
+            <!-- Finish Line -->
+            <div class="finish-line"></div>
+
+            <!-- Distance Markers -->
+            <div class="absolute top-4 left-4 text-white game-font">
+                <div class="text-sm">Distance: <span id="distance" class="text-yellow-400">0</span>m</div>
+            </div>
+        </div>
+
+        <!-- Text Display Section -->
+        <div class="text-display flex-1 min-h-0 p-4 relative overflow-auto">
+            <div class="max-w-full mx-auto">
+                <div class="text-center mb-4">
+                    <h3 class="text-white text-xl game-font mb-2">Type the Karen text:</h3>
+                    <div class="text-lg text-gray-300">Current key: <span id="currentKeyHint"
+                            class="text-yellow-400 text-lg font-bold">u</span></div>
+                </div>
+
+                <!-- Text Display Container -->
+                <div class="bg-gray-800 rounded-lg p-3 mb-3 h-16 overflow-hidden relative">
+                    <div id="textContainer" class="text-container karen-font text-white text-2xl">
+                        <!-- Text will be inserted here -->
+                    </div>
+                </div>
+
+                <!-- User Input Field -->
+                <div class="mb-3">
+                    <label class="text-white game-font mb-2 block">Press the keys (input stays clear):</label>
+                    <input type="text" id="userInput"
+                        class="input-field w-full p-4 text-white text-2xl karen-font rounded-lg focus:outline-none"
+                        placeholder="Focus here and press keys...">
+                </div>
+            </div>
+        </div>
+        <!-- Game Over Screen -->
+        <div id="gameOver" class="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 hidden">
+            <div class="bg-white rounded-xl p-8 text-center game-font max-w-md">
+                <h2 class="text-3xl font-bold mb-6 text-gray-800 flex items-center">
+                    <img src="Image/karen flag wave.png" alt="Motorcycle" class="w-10 h-8 mr-2 mr-4">
+                    Lesson Complete!
+                </h2>
+                <div class="space-y-3 mb-6">
+                    <div class="text-lg">Lesson: <span id="completedLesson" class="text-purple-600 font-bold">1</span>
+                    </div>
+                    <div class="text-lg">Speed: <span id="finalSpeed" class="text-yellow-600 font-bold">0</span> WPM
+                    </div>
+                    <div class="text-lg">Accuracy: <span id="finalAccuracy" class="text-green-600 font-bold">100</span>%
+                    </div>
+                    <div class="text-lg">Total Errors: <span id="finalErrors" class="text-red-600 font-bold">0</span>
+                    </div>
+                    <div class="text-lg">Raw Score: <span id="rawScore" class="text-blue-600 font-bold">0</span></div>
+                    <div class="text-lg">Error Penalty: <span id="errorPenalty" class="text-red-600 font-bold">0</span>
+                    </div>
+                    <div class="text-lg font-bold">Final Score: <span id="finalScore"
+                            class="text-purple-600 font-bold">0</span></div>
+                </div>
+                <button id="restartBtn"
+                    class="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors">
+                    🔄 Try Again
+                </button>
+            </div>
+        </div>
+
+        <!-- Instructions -->
+        <div id="instructions" class="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50">
+            <div class="bg-white rounded-xl p-8 text-center game-font max-w-2xl ">
+                <h2 class="text-3xl font-bold mb-6 text-gray-800 flex items-center gap-2">
+                    <img src="Image/motorcycle-face-right.jpg" alt="Motorcycle" class="w-14 h-12">
+                    Karen Kawthoolei Typing Game
+                </h2>
+
+                <div class="text-left space-y-2 mb-6 text-gray-700">
+                    <p>⭐ A random lesson will be selected automatically from 5 available lessons</p>
+                    <p>⭐ Type the Karen characters as shown in the display</p>
+                    <p>⭐ Your motorcycle moves forward as you type correctly</p>
+                    <p>⭐ Typing speed determines your WPM score</p>
+                    <p>⭐ Each error reduces your final score by 10 points</p>
+                    <p>⭐ Focus on accuracy and speed to get the best score!</p>
+                </div>
+                <div class="flex justify-center">
+                    <button id="startGame"
+                        class="flex items-center justify-center text-white bg-green-600 px-8 py-2 rounded-lg hover:bg-green-700 transition-colors text-xl">
+                        <img src="Image/karen flag wave.png" alt="Motorcycle" class="w-10 h-6 mr-2 mr-4">
+                        Start Game!
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <footer>
+        <div class="text-white text-center absolute bottom-2 left-1/2 transform -translate-x-1/2">
+            <p class="text-sm">&copy; 2025 Saw Lay Bay (KDHW) - All Rights Reserved</p>
+        </div>
+    </footer>
+
+    <script>
+        // Updated Karen Kawtholei key mappings - properly handle combined characters
+        const keyMappings = {
+            'က': 'u',
+            'ခ': 'c',
+            'ဂ': '*',
+            'ဃ': 'C',
+            'င': 'i',
+            'စ': 'p',
+            'ဆ': 'q',
+            'ၡ': 'Q',
+            'ည': 'n',
+            'တ': 'w',
+            'ထ': 'x',
+            'ဒ': 'K',
+            'ဒ်': 'a',
+            'န': 'e',
+            'ပ': 'y',
+            'ဖ': 'z',
+            'ဘ': 'b',
+            'မ': 'r',
+            'ယ': ',',
+            'ရ': '&',
+            'လ': 'v',
+            'ဝ': 'W',
+            'သ': 'o',
+            'ဟ': '[',
+            'အ': 't',
+            'ဧ': '{',
+            'ါ': 'g',
+            'ံ': 'H',
+            'ၢ': 'X',
+            'ၢ်': '>',
+            'ု': 'k',
+            'ူ': 'l',
+            '့': 'h',
+            'ဲ': 'J',
+            'ိ': 'd',
+            'ီ': 'D',
+            'ၥ်': 'm',
+            'း': ';',
+            'ၣ်': 'Shift+>',
+            'ၤ': 'R',
+            'ြ': 'j',
+            'ျ': 's',
+            'မ်': 'A',
+            'ှ': 'S',
+            'ၠ': 'F',
+            'ွ': 'G',
+            'ျ့': 'V',
+            'ှ့': 'B',
+            'နီၢ်': 'N',
+            'န့ၣ်': 'M',
+            ',': '<',
+            '?': '?',
+            '/': '/',
+            'စီၤ': 'f',
+            'လီၤ': 'L',
+            'ဒီး': ':',
+            'ၢၢ်': 'E',
+            'ၢၥ်': 'T',
+            'ၢၣ်': 'Y',
+            'ွ့': 'U',
+            '.': 'I',
+            'ှု': 'O',
+            'ၦ': 'P',
+            '(': '(',
+            ')': ')',
+            ' ': ' '
+        };
+
+        // Predefined lessons
+        const lessons = {
+            1: 'က ခ ဂ ဃ င စ ဆ ၡ ည တ ထ ဒ န ပ ဖ ဘ မ ယ ရ လ ဝ သ ဟ အ ဧ သ ဝ လ ရ ယ မ ဘ ဖ ပ န ဒ ထ တ ည ၡ ဆ စ င ဃ ဂ ခ က တ ထ ဒ န ပ ဖ မ ယ ရ ရ လ က သ က ည ဖ မ ပ လ အ တ အ လ တ ဖ န လ တ သ တ ဖ လ န က ခ က',
+            2: 'တ အ မ ပ တ ဒ ဘ မ ယ ဒ အ က ခ လ ဖ ယ အ ဆ ယ လ ဟ ခ အ အ ခ တ မ လ အ ဘ တ အ ပ တ လ တ အ မ ပ တ အ က ဆ ယ ဆ လ မ လ မ ခ ယ ခ ဂ တ က ဆ မ ခ တ သ အ ဒ တ ဆ တ အ ယ ပ ထ မ ခ အ က ဒ န ဟ တ က လ သ တ အ က ဆ ယ ဆ လ မ လ မ ခ',
+            3: 'ယ ပ က လ ယ ဧ ပ လ အ ဂ က တ ယ က က ည က ဘ ဆ ဂ ဆ သ ဝ ယ ထ န က ည ဖ က ဒ စ ဒ စ လ ယ ဒ အ ဃ တ အ သ တ ဂ တ ယ ဘ တ တ မ လ ယ ဘ က တ ယ သ ဒ သ က ထ ဘ လ မ ခ ယ ဘ က တ ယ သ',
+            4: 'ပ တ က လ လ ယ မ အ က စ ပ ဂ မ လ ယ ဃ ထ အ လ အ တ န သ အ ဂ န ဘ ဆ ဂ ဝ လ တ အ တ က မ အ လ ဟ ပ တ ခ လ က မ ဒ ဃ လ တ ဃ တ ဖ မ အ လ ဟ ပ လ ဂ မ ခ က လ',
+            5: 'တ အ မ ပ တ ဒ ဘ မ ယ ဒ အ က ခ လ ဖ ယ အ ဆ ယ လ ဟ ခ အ အ ခ တ မ လ အ ဘ တ အ ပ တ လ တ အ မ ပ တ အ က ဆ ယ ဆ လ မ လ မ ခ ယ ခ ဂ တ မ က ဆ မ ခ ၡ လ',
+        };
+
+        // Function to break text into logical typing units
+        function parseKarenText(text) {
+            const units = [];
+            let i = 0;
+
+            while (i < text.length) {
+                let unit = text[i];
+                let j = i + 1;
+
+                // Check for combined characters (consonant + vowel markers)
+                while (j < text.length) {
+                    const nextChar = text[j];
+                    // Check if next character is a vowel marker or modifier
+                    if (nextChar === '်' || nextChar === '့' || nextChar === 'ါ' || nextChar === 'ိ' ||
+                        nextChar === 'ী' || nextChar === 'ု' || nextChar === 'ူ' || nextChar === 'ေ' ||
+                        nextChar === 'ံ' || nextChar === 'ှ' || nextChar === 'ြ' || nextChar === 'ျ' ||
+                        nextChar === 'ွ' || nextChar === 'ၢ' || nextChar === 'ၣ' || nextChar === 'ၥ') {
+                        unit += nextChar;
+                        j++;
+                    } else {
+                        break;
+                    }
+                }
+
+                units.push(unit);
+                i = j;
+            }
+
+            return units;
+        }
+
+        // Function to select random lesson
+        function getRandomLesson() {
+            const lessonNumbers = [1, 2, 3, 4, 5];
+            const randomIndex = Math.floor(Math.random() * lessonNumbers.length);
+            return lessonNumbers[randomIndex];
+        }
+
+        // Game state
+        let gameState = {
+            currentText: '',
+            currentUnits: [],
+            currentIndex: 0,
+            score: 0,
+            correctCount: 0,
+            wrongCount: 0,
+            startTime: 0,
+            gameRunning: false,
+            speed: 0,
+            distance: 0,
+            totalUnits: 0,
+            selectedLesson: 1,
+            lastKeyTime: 0
+        };
+
+        // DOM elements
+        const elements = {
+            motorcycle: document.getElementById('motorcycle'),
+            textContainer: document.getElementById('textContainer'),
+            userInput: document.getElementById('userInput'),
+            currentKeyHint: document.getElementById('currentKeyHint'),
+            speed: document.getElementById('speed'),
+            progress: document.getElementById('progress'),
+            score: document.getElementById('score'),
+            distance: document.getElementById('distance'),
+            accuracy: document.getElementById('accuracy'),
+            correctCount: document.getElementById('correctCount'),
+            wrongCount: document.getElementById('wrongCount'),
+            progressBar: document.getElementById('progressBar'),
+            gameOver: document.getElementById('gameOver'),
+            instructions: document.getElementById('instructions'),
+            startGame: document.getElementById('startGame'),
+            restartBtn: document.getElementById('restartBtn'),
+            currentLesson: document.getElementById('currentLesson'),
+            completedLesson: document.getElementById('completedLesson')
+        };
+
+        // Update current key hint function
+        function updateCurrentKeyHint() {
+            if (gameState.currentIndex < gameState.totalUnits) {
+                const currentUnit = gameState.currentUnits[gameState.currentIndex];
+                const expectedKey = keyMappings[currentUnit] || currentUnit;
+                elements.currentKeyHint.textContent = expectedKey;
+            }
+        }
+
+        // Update display function
+        function updateDisplay() {
+            // Update speed
+            if (gameState.gameRunning && gameState.startTime) {
+                const elapsedTime = (Date.now() - gameState.startTime) / 1000 / 60;
+                gameState.speed = elapsedTime > 0 ? Math.round((gameState.correctCount / 5) / elapsedTime) : 0;
+            }
+
+            // Update progress
+            const progress = gameState.totalUnits > 0 ? Math.round((gameState.currentIndex / gameState.totalUnits) * 100) : 0;
+
+            // Update accuracy
+            const totalAttempts = gameState.correctCount + gameState.wrongCount;
+            const accuracy = totalAttempts > 0 ? Math.round((gameState.correctCount / totalAttempts) * 100) : 100;
+
+            // Update motorcycle position
+            const motorcyclePosition = Math.min(progress * 5, 400); // Max 400px from left
+            elements.motorcycle.style.left = `${50 + motorcyclePosition}px`;
+
+            // Update display elements
+            elements.speed.textContent = gameState.speed;
+            elements.progress.textContent = progress;
+            elements.score.textContent = gameState.score;
+            elements.distance.textContent = gameState.distance;
+            elements.accuracy.textContent = accuracy;
+            elements.correctCount.textContent = gameState.correctCount;
+            elements.wrongCount.textContent = gameState.wrongCount;
+            elements.progressBar.style.width = `${progress}%`;
+        }
+
+        // Create character display
+        function createCharacterDisplay() {
+            elements.textContainer.innerHTML = '';
+
+            // Create a display showing units with proper highlighting
+            for (let i = 0; i < gameState.currentUnits.length; i++) {
+                const unit = gameState.currentUnits[i];
+                const span = document.createElement('span');
+                span.textContent = unit;
+                span.setAttribute('data-index', i);
+
+                if (i < gameState.currentIndex) {
+                    span.className = 'typed-char';
+                } else if (i === gameState.currentIndex) {
+                    span.className = 'current-char';
+                } else {
+                    span.className = 'upcoming-char';
+                }
+
+                elements.textContainer.appendChild(span);
+            }
+
+            updateCurrentKeyHint();
+        }
+
+        // Handle key press - FIXED VERSION
+        function handleKeyPress(event) {
+            if (!gameState.gameRunning) return;
+
+            const key = event.key;
+            const currentTime = Date.now();
+
+            // Ignore rapid consecutive keypresses (debounce)
+            if (currentTime - gameState.lastKeyTime < 50) {
+                return;
+            }
+            gameState.lastKeyTime = currentTime;
+
+            // Ignore modifier keys alone
+            if (['Shift', 'Control', 'Alt', 'Meta', 'CapsLock', 'Tab', 'Enter', 'Escape'].includes(key)) {
+                return;
+            }
+
+            const currentUnit = gameState.currentUnits[gameState.currentIndex];
+            const expectedKey = keyMappings[currentUnit] || currentUnit;
+
+            console.log('Key pressed:', key, 'Expected:', expectedKey, 'Current unit:', currentUnit);
+
+            // Check for correct key match
+            const isCorrect = (key === expectedKey);
+
+            if (isCorrect) {
+                // Correct key
+                gameState.correctCount++;
+                gameState.score += 10;
+                gameState.distance += 5;
+                const currentInputValue = elements.userInput.value;
+                elements.userInput.value = currentInputValue + currentUnit;
+
+                // Update character styling
+                const currentUnitSpan = elements.textContainer.querySelector(`[data-index="${gameState.currentIndex}"]`);
+                if (currentUnitSpan) {
+                    currentUnitSpan.className = 'typed-char';
+                }
+
+                gameState.currentIndex++;
+
+                // Update next character styling
+                const nextUnitSpan = elements.textContainer.querySelector(`[data-index="${gameState.currentIndex}"]`);
+                if (nextUnitSpan) {
+                    nextUnitSpan.className = 'current-char';
+                }
+
+                // Visual feedback
+                elements.motorcycle.classList.add('boost');
+                setTimeout(() => elements.motorcycle.classList.remove('boost'), 300);
+
+                elements.userInput.classList.add('correct-feedback');
+                setTimeout(() => elements.userInput.classList.remove('correct-feedback'), 300);
+
+                // Check if lesson is complete
+                if (gameState.currentIndex >= gameState.totalUnits) {
+                    endGame();
+                    return;
+                }
+            } else {
+                // Wrong key
+                gameState.wrongCount++;
+                gameState.score = Math.max(0, gameState.score - 5);
+
+                // Visual feedback
+                elements.userInput.classList.add('wrong-feedback');
+                setTimeout(() => elements.userInput.classList.remove('wrong-feedback'), 300);
+
+                // Mark character as error temporarily
+                const currentUnitSpan = elements.textContainer.querySelector(`[data-index="${gameState.currentIndex}"]`);
+                if (currentUnitSpan) {
+                    currentUnitSpan.className = 'error-char';
+                    setTimeout(() => {
+                        handleTypingScroll();
+
+                    }, 1000);
+                }
+            }
+
+            updateCurrentKeyHint();
+            updateDisplay();
+        }
+
+        // Function to handle smooth scrolling like online typing games
+        function handleTypingScroll() {
+            // Handle text display scrolling (main text container)
+            const textDisplay = elements.textContainer.parentElement; // The visible container
+            const textContainer = elements.textContainer;
+            const containerWidth = textDisplay.offsetWidth;
+            const cursorFixedPosition = containerWidth * 0.75; // Cursor should stay here after reaching 3/4
+
+            // Find the current character (where cursor should be)
+            const currentCharSpan = textContainer.querySelector(`[data-index="${gameState.currentIndex}"]`);
+
+            if (currentCharSpan) {
+                // Get the natural position of current character (without any transform)
+                const charNaturalPosition = currentCharSpan.offsetLeft;
+
+                // Check if the natural cursor position has reached 3/4 of container
+                if (charNaturalPosition <= cursorFixedPosition) {
+                    // Before reaching 3/4, keep text at original position (no scrolling)
+                    textContainer.style.transform = 'translateX(0px)';
+                    textContainer.style.transition = 'none'; // No transition needed when static
+                } else {
+                    // After reaching 3/4, start scrolling to keep cursor at fixed position
+                    const targetScroll = cursorFixedPosition - charNaturalPosition;
+                    textContainer.style.transform = `translateX(${targetScroll}px)`;
+                    textContainer.style.transition = 'transform 0.3s ease-out';
+                }
+            }
+
+            // Handle input field scrolling (same logic)
+            const inputField = elements.userInput;
+            const inputWidth = inputField.offsetWidth - 32; // Account for padding
+            const inputCursorFixedPosition = inputWidth * 0.75;
+
+            // Build the typed text
+            let typedText = '';
+            for (let i = 0; i < gameState.currentIndex && i < gameState.currentUnits.length; i++) {
+                typedText += gameState.currentUnits[i];
+            }
+
+            // Update input field content
+            if (inputField.value !== typedText) {
+                inputField.value = typedText;
+            }
+
+            // Measure natural cursor position in input field
+            const tempSpan = document.createElement('span');
+            tempSpan.style.visibility = 'hidden';
+            tempSpan.style.position = 'absolute';
+            tempSpan.style.fontSize = '2rem';
+            tempSpan.className = 'karen-font';
+            tempSpan.textContent = typedText;
+            document.body.appendChild(tempSpan);
+            const naturalCursorPosition = tempSpan.offsetWidth;
+            document.body.removeChild(tempSpan);
+
+            // Check if natural cursor position has reached 3/4 of input field
+            if (naturalCursorPosition <= inputCursorFixedPosition) {
+                // Before reaching 3/4, no scrolling needed
+                inputField.scrollLeft = 0;
+            } else {
+                // After reaching 3/4, scroll to keep cursor at fixed position
+                const scrollAmount = naturalCursorPosition - inputCursorFixedPosition;
+                inputField.scrollLeft = scrollAmount;
+            }
+        }
+
+        // Start game
+        function startGame() {
+            // Select random lesson
+            gameState.selectedLesson = getRandomLesson();
+            gameState.currentText = lessons[gameState.selectedLesson];
+            gameState.currentUnits = parseKarenText(gameState.currentText);
+            gameState.currentIndex = 0;
+            gameState.score = 0;
+            gameState.correctCount = 0;
+            gameState.wrongCount = 0;
+            gameState.startTime = Date.now();
+            gameState.gameRunning = true;
+            gameState.speed = 0;
+            gameState.distance = 0;
+            gameState.totalUnits = gameState.currentUnits.length;
+            gameState.lastKeyTime = 0;
+
+            // Update current lesson display
+            elements.currentLesson.textContent = gameState.selectedLesson;
+
+            console.log('Selected lesson:', gameState.selectedLesson);
+            console.log('Lesson text:', gameState.currentText);
+            console.log('Parsed units:', gameState.currentUnits);
+
+            createCharacterDisplay();
+            updateDisplay();
+
+            elements.instructions.classList.add('hidden');
+            elements.userInput.focus();
+            elements.userInput.value = '';
+            elements.userInput.scrollLeft = 0;
+            elements.textContainer.style.transform = 'translateX(0)';
+        }
+
+        // End game
+        function endGame() {
+            gameState.gameRunning = false;
+
+            // Calculate final stats
+            const elapsedTime = (Date.now() - gameState.startTime) / 1000 / 60;
+            const finalSpeed = elapsedTime > 0 ? Math.round((gameState.totalUnits / 5) / elapsedTime) : 0;
+            const totalAttempts = gameState.correctCount + gameState.wrongCount;
+            const accuracy = totalAttempts > 0 ? Math.round((gameState.correctCount / totalAttempts) * 100) : 100;
+            const rawScore = gameState.score + (finalSpeed * 2);
+            const errorPenalty = gameState.wrongCount * 10;
+            const finalScore = Math.max(0, rawScore - errorPenalty);
+
+            // Display final results
+            document.getElementById('completedLesson').textContent = gameState.selectedLesson;
+            document.getElementById('finalSpeed').textContent = finalSpeed;
+            document.getElementById('finalAccuracy').textContent = accuracy;
+            document.getElementById('finalErrors').textContent = gameState.wrongCount;
+            document.getElementById('rawScore').textContent = rawScore;
+            document.getElementById('errorPenalty').textContent = errorPenalty;
+            document.getElementById('finalScore').textContent = finalScore;
+
+            elements.gameOver.classList.remove('hidden');
+        }
+
+        // Reset game
+        function resetGame() {
+            gameState = {
+                currentText: '',
+                currentUnits: [],
+                currentIndex: 0,
+                score: 0,
+                correctCount: 0,
+                wrongCount: 0,
+                startTime: 0,
+                gameRunning: false,
+                speed: 0,
+                distance: 0,
+                totalUnits: 0,
+                selectedLesson: 1,
+                lastKeyTime: 0
+            };
+
+            elements.gameOver.classList.add('hidden');
+            elements.instructions.classList.remove('hidden');
+            elements.textContainer.innerHTML = '';
+            elements.userInput.value = '';
+            elements.userInput.scrollLeft = 0;
+            elements.textContainer.classList.remove('marquee');
+            elements.textContainer.style.transform = 'translateX(0)';
+
+            // Reset display
+            elements.speed.textContent = '0';
+            elements.progress.textContent = '0';
+            elements.score.textContent = '0';
+            elements.distance.textContent = '0';
+            elements.accuracy.textContent = '100';
+            elements.correctCount.textContent = '0';
+            elements.wrongCount.textContent = '0';
+            elements.currentKeyHint.textContent = 'u';
+            elements.currentLesson.textContent = '-';
+            // Reset scrolling positions
+            elements.textContainer.style.transform = 'translateX(0)';
+            elements.userInput.scrollLeft = 0;
+            elements.userInput.value = '';
+        }
+
+        // Event listeners
+        elements.startGame.addEventListener('click', () => {
+            startGame();
+        });
+
+        elements.restartBtn.addEventListener('click', resetGame);
+        // Allow text to display in input field and handle marquee
+        elements.userInput.addEventListener('keydown', (e) => {
+            // Handle the key press
+            handleKeyPress(e);
+
+            // Check if scrolling is needed after a short delay
+            setTimeout(() => {
+                handleTypingScroll();
+            }, 10);
+
+            // Prevent default behavior for most keys except system keys
+            if (!['Tab', 'F5', 'F12'].includes(e.key) && !e.ctrlKey && !e.altKey && !e.metaKey) {
+                e.preventDefault();
+            }
+        });
+
+        // Initialize game
+        document.addEventListener('DOMContentLoaded', () => {
+            // Show instructions on load
+            elements.instructions.classList.remove('hidden');
+
+            // Set initial key hint
+            elements.currentKeyHint.textContent = 'u';
+            elements.currentLesson.textContent = '-';
+        });
+
+        // Animation loop for smooth updates
+        function gameLoop() {
+            if (gameState.gameRunning) {
+                updateDisplay();
+                handleTypingScroll();
+            }
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Start the game loop
+        gameLoop();
+    </script>
+</body>
+
+</html>

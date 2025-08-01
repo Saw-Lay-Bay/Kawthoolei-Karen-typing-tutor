@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kawthoolei Karen Typing - Feedback & Reviews</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .karen-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .star-rating {
+            display: flex;
+            gap: 4px;
+        }
+
+        .star {
+            cursor: pointer;
+            color: #d1d5db;
+            transition: color 0.2s;
+        }
+
+        .star.active {
+            color: #fbbf24;
+        }
+
+        .star:hover {
+            color: #f59e0b;
+        }
+
+        .feedback-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+
+<body class="karen-gradient min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <header class="text-center mb-4">
+            <div>
+                <h1 class="text-4xl md:text-6xl font-bold text-white mb-4">
+                    <i class="fas fa-keyboard mr-4"></i>
+                    Kawthoolei Karen Typing <span class=""><a href="index.html"
+                            class="text-2xl bg-gray-700 px-4 py-1 rounded-lg text-yellow-500">Home</a></span>
+                </h1>
+                <p class="text-xl text-white/90 max-w-2xl mx-auto">
+                    Share your experience and help us improve our <span
+                        class="bg-gray-100 py-1 px-2 rounded-lg text-blue-700">Kawthoolei</span>
+                    Karen
+                    language typing application
+                </p>
+            </div>
+
+        </header>
+        <div></div>
+
+        <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-8">
+            <!-- Feedback Form -->
+            <div class="feedback-card rounded-2xl py-4 px-8">
+                <h2 class="text-2xl font-bold text-white mb-4">
+                    <i class="fas fa-comment-dots mr-3"></i>
+                    Share Your Feedback
+                </h2>
+
+                <form id="feedbackForm" class="space-y-4">
+                    <div>
+                        <label class="block text-white/90 font-medium mb-2">Your Name</label>
+                        <input type="text" id="userName" required
+                            class="w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
+                            placeholder="Enter your name">
+                    </div>
+
+                    <div>
+                        <label class="block text-white/90 font-medium mb-2">Email (Optional)</label>
+                        <input type="email" id="userEmail"
+                            class="w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
+                            placeholder="your.email@example.com">
+                    </div>
+
+                    <div>
+                        <label class="block text-white/90 font-medium mb-3">Rate Your Experience</label>
+                        <div class="star-rating text-2xl" id="starRating">
+                            <i class="fas fa-star star" data-rating="1"></i>
+                            <i class="fas fa-star star" data-rating="2"></i>
+                            <i class="fas fa-star star" data-rating="3"></i>
+                            <i class="fas fa-star star" data-rating="4"></i>
+                            <i class="fas fa-star star" data-rating="5"></i>
+                        </div>
+                        <input type="hidden" id="rating" value="0">
+                    </div>
+
+                    <div>
+                        <label class="block text-white/90 font-medium mb-2">Category</label>
+                        <select id="category" required
+                            class="w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                            style="color: white; background-color: rgba(255, 255, 255, 0.2);">
+                            <option value="" style="color: #374151; background-color: white;">Select a category</option>
+                            <option value="usability" style="color: #374151; background-color: white;">Usability
+                            </option>
+                            <option value="features" style="color: #374151; background-color: white;">Features</option>
+                            <option value="performance" style="color: #374151; background-color: white;">Performance
+                            </option>
+                            <option value="bugs" style="color: #374151; background-color: white;">Bug Report</option>
+                            <option value="suggestion" style="color: #374151; background-color: white;">Suggestion
+                            </option>
+                            <option value="general" style="color: #374151; background-color: white;">General Feedback
+                            </option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-white/90 font-medium mb-2">Your Feedback</label>
+                        <textarea id="feedback" required rows="5"
+                            class="w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/60 resize-none focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
+                            placeholder="Tell us about your experience with Kawthoolei Karen Typing..."></textarea>
+                    </div>
+
+                    <button type="submit"
+                        class="w-full bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold py-3 px-6 rounded-lg transition-colors duration-200 transform hover:scale-105">
+                        <i class="fas fa-paper-plane mr-2"></i>
+                        Submit Feedback
+                    </button>
+                </form>
+            </div>
+
+            <!-- Reviews Display -->
+            <div class="feedback-card rounded-2xl py-2 px-8">
+                <h2 class="text-2xl font-bold text-white my-2 mx-8">
+                    <i class="fas fa-star mr-3"></i>
+                    Recent Reviews
+                </h2>
+
+                <div id="noReviewsMessage" class="text-center py-12">
+                    <i class="fas fa-comments text-6xl text-white/30 mb-4"></i>
+                    <h3 class="text-xl text-white/70 mb-2">No reviews yet</h3>
+                    <p class="text-white/50">Be the first to share your experience!</p>
+                </div>
+
+                <div id="reviewsList" class="space-y-6 hidden">
+                    <!-- Reviews will be added here dynamically -->
+                </div>
+
+                <div class="mt-6 text-center">
+                    <button id="loadMoreBtn"
+                        class="bg-white/20 hover:bg-white/30 text-white px-6 py-2 rounded-lg transition-colors duration-200 hidden">
+                        Load More Reviews
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Section -->
+        <div class="max-w-4xl mx-auto mt-4">
+            <div class="feedback-card rounded-2xl p-4">
+                <h3 class="text-2xl font-bold text-white text-center mb-4">
+                    <i class="fas fa-chart-bar mr-3"></i>
+                    Feedback Statistics
+                </h3>
+                <div class="grid md:grid-cols-4 gap-6 text-center" id="statsContainer">
+                    <div>
+                        <div class="text-3xl font-bold text-yellow-400 mb-2" id="avgRating">-</div>
+                        <div class="text-white/80">Average Rating</div>
+                        <div class="text-white/80">တၢ်ထိၣ်ဃူပတီၢ်</div>
+                    </div>
+                    <div>
+                        <div class="text-3xl font-bold text-yellow-400 mb-2" id="totalReviews">0</div>
+                        <div class="text-white/80">Total Reviews</div>
+                        <div class="text-white/80">တၢ်ကွၢ်ကဒါ</div>
+                    </div>
+                    <div>
+                        <div class="text-3xl font-bold text-yellow-400 mb-2" id="satisfactionRate">-</div>
+                        <div class="text-white/80">Satisfaction Rate</div>
+                        <div class="text-white/80">မျးကယၤလီၤသးမံ</div>
+                    </div>
+                    <div>
+                        <div class="text-3xl font-bold text-yellow-400 mb-2" id="thisMonth">0</div>
+                        <div class="text-white/80">This Month</div>
+                        <div class="text-white/80">တလါညါအံၤ</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="relative z-20 px-8 py-2 mt-auto">
+        <div class="text-white text-center absolute bottom-2 left-1/2 transform -translate-x-1/2">
+            <p class="text-lg">&copy; 2025 Saw Lay Bay (KDHW) - All Rights Reserved</p>
+        </div>
+    </footer>
+
+    <script>
+        // Airtable Configuration
+        const AIRTABLE_API_KEY = 'YOUR_AIRTABLE_API_KEY'; // Replace with your API key
+        const AIRTABLE_BASE_ID = 'YOUR_BASE_ID'; // Replace with your base ID
+        const AIRTABLE_TABLE_NAME = 'Reviews'; // Table name in Airtable
+
+        // For demo purposes, we'll use a mock API. Replace these functions with real Airtable API calls
+        const USE_DEMO_MODE = true; // Set to false when you have Airtable setup
+
+        // Global variables
+        const MAX_VISIBLE_REVIEWS = 4;
+        let allReviews = [];
+        let visibleReviews = [];
+        let currentRating = 0;
+
+        // Star rating functionality
+        const stars = document.querySelectorAll('.star');
+        const ratingInput = document.getElementById('rating');
+
+        stars.forEach(star => {
+            star.addEventListener('click', function () {
+                currentRating = parseInt(this.dataset.rating);
+                ratingInput.value = currentRating;
+                updateStars();
+            });
+
+            star.addEventListener('mouseover', function () {
+                const hoverRating = parseInt(this.dataset.rating);
+                updateStars(hoverRating);
+            });
+        });
+
+        document.getElementById('starRating').addEventListener('mouseleave', function () {
+            updateStars();
+        });
+
+        function updateStars(tempRating = null) {
+            const rating = tempRating || currentRating;
+            stars.forEach((star, index) => {
+                if (index < rating) {
+                    star.classList.add('active');
+                } else {
+                    star.classList.remove('active');
+                }
+            });
+        }
+
+        // Airtable API Functions
+        async function saveReviewToAirtable(reviewData) {
+            if (USE_DEMO_MODE) {
+                // Demo mode - simulate API delay
+                return new Promise(resolve => {
+                    setTimeout(() => {
+                        resolve({ success: true, id: 'demo_' + Date.now() });
+                    }, 1000);
+                });
+            }
+
+            try {
+                const response = await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${AIRTABLE_TABLE_NAME}`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${AIRTABLE_API_KEY}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        records: [{
+                            fields: {
+                                'Name': reviewData.name,
+                                'Email': reviewData.email || '',
+                                'Rating': reviewData.rating,
+                                'Category': reviewData.category,
+                                'Feedback': reviewData.feedback,
+                                'Timestamp': reviewData.timestamp
+                            }
+                        }]
+                    })
+                });
+
+                const result = await response.json();
+                return { success: response.ok, data: result };
+            } catch (error) {
+                console.error('Error saving to Airtable:', error);
+                return { success: false, error: error.message };
+            }
+        }
+
+        async function loadReviewsFromAirtable() {
+            if (USE_DEMO_MODE) {
+                // Demo mode - return sample data after delay
+                return new Promise(resolve => {
+                    setTimeout(() => {
+                        resolve([
+                            {
+                                name: 'Saw Eh Htoo',
+                                rating: 5,
+                                category: 'usability',
+                                feedback: 'This typing application is excellent for learning Karen script! Very user-friendly and accurate.',
+                                timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString() // 2 days ago
+                            },
+                            {
+                                name: 'Naw Paw',
+                                rating: 4,
+                                category: 'features',
+                                feedback: 'Great tool for preserving our Karen language. Would love to see more font options in future updates.',
+                                timestamp: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString() // 1 week ago
+                            }
+                        ]);
+                    }, 1500);
+                });
+            }
+
+            try {
+                const response = await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${AIRTABLE_TABLE_NAME}?sort[0][field]=Timestamp&sort[0][direction]=desc`, {
+                    headers: {
+                        'Authorization': `Bearer ${AIRTABLE_API_KEY}`
+                    }
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    return result.records.map(record => ({
+                        name: record.fields.Name,
+                        email: record.fields.Email,
+                        rating: record.fields.Rating,
+                        category: record.fields.Category,
+                        feedback: record.fields.Feedback,
+                        timestamp: record.fields.Timestamp
+                    }));
+                } else {
+                    console.error('Error loading from Airtable:', result);
+                    return [];
+                }
+            } catch (error) {
+                console.error('Error loading from Airtable:', error);
+                return [];
+            }
+        }
+
+        // Form submission
+        document.getElementById('feedbackForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const submitButton = this.querySelector('button[type="submit"]');
+            const originalButtonText = submitButton.innerHTML;
+            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Submitting...';
+            submitButton.disabled = true;
+
+            const formData = {
+                name: document.getElementById('userName').value,
+                email: document.getElementById('userEmail').value,
+                rating: parseInt(document.getElementById('rating').value),
+                category: document.getElementById('category').value,
+                feedback: document.getElementById('feedback').value,
+                timestamp: new Date().toISOString()
+            };
+
+            if (formData.rating === 0) {
+                alert('Please provide a star rating before submitting.');
+                submitButton.innerHTML = originalButtonText;
+                submitButton.disabled = false;
+                return;
+            }
+
+            try {
+                const result = await saveReviewToAirtable(formData);
+
+                if (result.success) {
+                    // Add new review to local array
+                    allReviews.unshift(formData);
+
+                    // Update display
+                    updateVisibleReviews();
+                    updateStatistics();
+
+                    // Reset form
+                    this.reset();
+                    currentRating = 0;
+                    updateStars();
+
+                    // Show success message
+                    showSuccessMessage();
+                } else {
+                    alert('Error submitting feedback. Please try again.');
+                }
+            } catch (error) {
+                console.error('Submission error:', error);
+                alert('Error submitting feedback. Please try again.');
+            }
+
+            submitButton.innerHTML = originalButtonText;
+            submitButton.disabled = false;
+        });
+
+        function updateVisibleReviews() {
+            const reviewsList = document.getElementById('reviewsList');
+            const noReviewsMessage = document.getElementById('noReviewsMessage');
+            const loadMoreBtn = document.getElementById('loadMoreBtn');
+
+            // Clear current visible reviews
+            reviewsList.innerHTML = '';
+
+            if (allReviews.length === 0) {
+                // Show no reviews message
+                noReviewsMessage.classList.remove('hidden');
+                reviewsList.classList.add('hidden');
+                loadMoreBtn.classList.add('hidden');
+                return;
+            }
+
+            // Hide no reviews message and show reviews list
+            noReviewsMessage.classList.add('hidden');
+            reviewsList.classList.remove('hidden');
+
+            // Show up to MAX_VISIBLE_REVIEWS
+            visibleReviews = allReviews.slice(0, MAX_VISIBLE_REVIEWS);
+
+            visibleReviews.forEach(review => {
+                addReviewToDOM(review);
+            });
+
+            // Show/hide load more button
+            if (allReviews.length > MAX_VISIBLE_REVIEWS) {
+                loadMoreBtn.classList.remove('hidden');
+            } else {
+                loadMoreBtn.classList.add('hidden');
+            }
+        }
+
+        function addReviewToDOM(data) {
+            const reviewsList = document.getElementById('reviewsList');
+            const newReview = document.createElement('div');
+            newReview.className = 'bg-white/10 rounded-lg p-4 border border-white/20';
+
+            const starsHtml = Array.from({ length: 5 }, (_, i) =>
+                i < data.rating ? '<i class="fas fa-star"></i>' : '<i class="far fa-star"></i>'
+            ).join('');
+
+            const timeAgo = getTimeAgo(data.timestamp);
+
+            newReview.innerHTML = `
+                <div class="flex items-center justify-between mb-2">
+                    <h4 class="font-semibold text-white">${data.name}</h4>
+                    <div class="flex text-yellow-400">
+                        ${starsHtml}
+                    </div>
+                </div>
+                <p class="text-white/80 text-sm mb-2">${data.category} • ${timeAgo}</p>
+                <p class="text-white/90">${data.feedback}</p>
+            `;
+
+            reviewsList.appendChild(newReview);
+        }
+
+        function getTimeAgo(timestamp) {
+            const now = new Date();
+            const reviewTime = new Date(timestamp);
+            const diffMs = now - reviewTime;
+            const diffMins = Math.floor(diffMs / 60000);
+
+            if (diffMins < 1) return 'Just now';
+            if (diffMins < 60) return `${diffMins} minutes ago`;
+
+            const diffHours = Math.floor(diffMins / 60);
+            if (diffHours < 24) return `${diffHours} hours ago`;
+
+            const diffDays = Math.floor(diffHours / 24);
+            if (diffDays < 7) return `${diffDays} days ago`;
+
+            const diffWeeks = Math.floor(diffDays / 7);
+            if (diffWeeks < 4) return `${diffWeeks} weeks ago`;
+
+            const diffMonths = Math.floor(diffDays / 30);
+            return `${diffMonths} months ago`;
+        }
+
+        function updateStatistics() {
+            if (allReviews.length === 0) {
+                document.getElementById('avgRating').textContent = '-';
+                document.getElementById('totalReviews').textContent = '0';
+                document.getElementById('satisfactionRate').textContent = '-';
+                document.getElementById('thisMonth').textContent = '0';
+                return;
+            }
+
+            // Calculate average rating
+            const totalRating = allReviews.reduce((sum, review) => sum + review.rating, 0);
+            const avgRating = (totalRating / allReviews.length).toFixed(1);
+            document.getElementById('avgRating').textContent = avgRating;
+
+            // Total reviews
+            document.getElementById('totalReviews').textContent = allReviews.length;
+
+            // Satisfaction rate (4+ stars)
+            const satisfiedReviews = allReviews.filter(review => review.rating >= 4).length;
+            const satisfactionRate = Math.round((satisfiedReviews / allReviews.length) * 100);
+            document.getElementById('satisfactionRate').textContent = satisfactionRate + '%';
+
+            // This month reviews
+            const now = new Date();
+            const thisMonth = allReviews.filter(review => {
+                const reviewDate = new Date(review.timestamp);
+                return reviewDate.getMonth() === now.getMonth() &&
+                    reviewDate.getFullYear() === now.getFullYear();
+            }).length;
+            document.getElementById('thisMonth').textContent = thisMonth;
+        }
+
+        function showSuccessMessage() {
+            const successDiv = document.createElement('div');
+            successDiv.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 transform translate-x-full transition-transform duration-300';
+            successDiv.innerHTML = '<i class="fas fa-check-circle mr-2"></i>Feedback submitted successfully!';
+
+            document.body.appendChild(successDiv);
+
+            setTimeout(() => {
+                successDiv.classList.remove('translate-x-full');
+            }, 100);
+
+            setTimeout(() => {
+                successDiv.classList.add('translate-x-full');
+                setTimeout(() => {
+                    document.body.removeChild(successDiv);
+                }, 300);
+            }, 3000);
+        }
+
+        // Load more reviews functionality
+        document.getElementById('loadMoreBtn').addEventListener('click', function () {
+            this.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Loading...';
+
+            setTimeout(() => {
+                // Show all reviews instead of just the first 4
+                const reviewsList = document.getElementById('reviewsList');
+                reviewsList.innerHTML = '';
+
+                allReviews.forEach(review => {
+                    addReviewToDOM(review);
+                });
+
+                // Hide the load more button since all reviews are now shown
+                this.classList.add('hidden');
+            }, 1000);
+        });
+
+        // Initialize on page load
+        async function initializePage() {
+            // Show loading state
+            const noReviewsMessage = document.getElementById('noReviewsMessage');
+            noReviewsMessage.innerHTML = `
+                <i class="fas fa-spinner fa-spin text-4xl text-white/30 mb-4"></i>
+                <h3 class="text-xl text-white/70 mb-2">Loading reviews...</h3>
+                <p class="text-white/50">Please wait a moment</p>
+            `;
+
+            try {
+                // Load existing reviews from Airtable
+                allReviews = await loadReviewsFromAirtable();
+
+                // Update display
+                updateVisibleReviews();
+                updateStatistics();
+            } catch (error) {
+                console.error('Error loading reviews:', error);
+                // Reset to no reviews state
+                noReviewsMessage.innerHTML = `
+                    <i class="fas fa-comments text-6xl text-white/30 mb-4"></i>
+                    <h3 class="text-xl text-white/70 mb-2">No reviews yet</h3>
+                    <p class="text-white/50">Be the first to share your experience!</p>
+                `;
+            }
+        }
+
+        // Start initialization when page loads
+        initializePage();
+        updateStars();
+    </script>
+</body>
+
+</html>

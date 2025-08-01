@@ -1,0 +1,1343 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kawthoolei Karen Language Typing Game </title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    animation: {
+                        'pulse-slow': 'pulse 1s infinite',
+                        'shake': 'shake 0.5s ease-in-out',
+                        'marquee': 'marquee 15s linear infinite',
+                        'cursor-blink': 'cursor-blink 1s infinite',
+                        'error-badge': 'errorBadge 2s ease-in-out',
+                    },
+                    keyframes: {
+                        shake: {
+                            '0%, 100%': { transform: 'translateX(0)' },
+                            '25%': { transform: 'translateX(-5px)' },
+                            '75%': { transform: 'translateX(5px)' },
+                        },
+                        marquee: {
+                            '0%': { transform: 'translateX(100%)' },
+                            '100%': { transform: 'translateX(-100%)' },
+                        },
+                        'cursor-blink': {
+                            '0%, 50%': { opacity: '1' },
+                            '51%, 100%': { opacity: '0' },
+                        },
+                        errorBadge: {
+                            '0%': { transform: 'scale(0)', opacity: '0' },
+                            '20%': { transform: 'scale(1.2)', opacity: '1' },
+                            '40%': { transform: 'scale(1)', opacity: '1' },
+                            '90%': { transform: 'scale(1)', opacity: '1' },
+                            '100%': { transform: 'scale(0)', opacity: '0' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Orbitron', monospace;
+            overflow-x: hidden;
+        }
+
+        .char-error {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        .text-display-container {
+            overflow: hidden;
+            height: 70px;
+            /* Fixed height to show about 3-4 lines */
+            position: relative;
+        }
+
+        .text-content {
+            word-wrap: break-word;
+            white-space: normal;
+            line-height: 1.5;
+            transition: transform 0.3s ease;
+        }
+
+        .typing-cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1.2em;
+            background-color: #10b981;
+            animation: cursor-blink 1s infinite;
+            margin-left: 1px;
+        }
+
+        .input-text-green {
+            color: #10b981;
+            font-weight: bold;
+        }
+
+        .main-container {
+            height: 100vh;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+        }
+
+        .main-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .main-container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+
+        .main-container::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+        }
+
+        .main-container::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .error-badge {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 1rem;
+            font-weight: bold;
+            font-size: 1.2rem;
+            box-shadow: 0 10px 25px rgba(239, 68, 68, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            animation: errorBadge 2s ease-in-out;
+        }
+
+        .level-item {
+            transition: all 0.3s ease;
+        }
+
+        .level-item:hover {
+            transform: translateX(5px);
+        }
+
+        .level-completed {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
+        .level-current {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            animation: pulse 2s infinite;
+        }
+
+        .level-locked {
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Scrollbar for level panel */
+        .level-panel::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .level-panel::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+
+        .level-panel::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+        }
+
+        /* User input display  */
+        .user-input-container {
+            height: 90px;
+            /* Fixed height for about 3 rows */
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+        }
+
+        .user-input-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .user-input-container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+
+        .user-input-container::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+        }
+
+        .user-input-container::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .user-input-text {
+            word-wrap: break-word;
+            white-space: normal;
+            line-height: 1;
+            height: 90px;
+        }
+
+        /* Level Pane CSS - Modified for 11 levels max display */
+        .level-panel {
+            position: relative;
+            /* max-height: calc(11 * 60px + 20px); */
+            max-height: calc(100vh);
+            /* 11 levels * approximate height per level + padding */
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+        }
+
+        .level-panel::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .level-panel::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+
+        .level-panel::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+        }
+
+        .level-panel::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .level-panel::after {
+            content: '';
+            position: sticky;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 20px;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .levels-container {
+            padding-bottom: 5px;
+        }
+
+        .level-item {
+            transition: all 0.3s ease;
+            margin-bottom: 8px;
+            min-height: 50px;
+            /* Ensure consistent height */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .level-item:hover:not(.level-locked-inactive) {
+            transform: translateX(5px);
+        }
+
+        .level-locked-inactive {
+            opacity: 0.5;
+            cursor: not-allowed !important;
+        }
+
+        .level-locked-inactive:hover {
+            transform: none !important;
+        }
+
+        /* Mobile level panel modifications */
+        @media (max-width: 768px) {
+            .level-panel {
+                display: none;
+            }
+
+            .mobile-level-toggle {
+                display: block;
+            }
+
+            /* Mobile level panel also gets the same height restriction */
+            #mobile-level-panel .levels-container {
+                max-height: calc(11 * 60px + 20px);
+                overflow-y: auto;
+                scrollbar-width: thin;
+                scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+            }
+
+            #mobile-level-panel .levels-container::-webkit-scrollbar {
+                width: 6px;
+            }
+
+            #mobile-level-panel .levels-container::-webkit-scrollbar-track {
+                background: rgba(255, 255, 255, 0.1);
+                border-radius: 3px;
+            }
+
+            #mobile-level-panel .levels-container::-webkit-scrollbar-thumb {
+                background: rgba(255, 255, 255, 0.3);
+                border-radius: 3px;
+            }
+
+            #mobile-level-panel .levels-container::-webkit-scrollbar-thumb:hover {
+                background: rgba(255, 255, 255, 0.5);
+            }
+        }
+
+        @media (min-width: 769px) {
+            .mobile-level-toggle {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-to-br from-indigo-500 via-purple-600 to-purple-700 text-white">
+    <audio id="gameAudio" loop>
+        <source src="karen country.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    <div class="main-container">
+        <div class="flex w-full min-h-screen">
+            <!-- Left Level Panel (10% width) -->
+            <div
+                class="w-1/10 mb-5 rounded-lg mt-3 min-w-[120px] bg-black bg-opacity-40 backdrop-blur-sm level-panel hidden md:block">
+                <div class="p-3">
+                    <h3 class="text-lg font-bold mb-4 text-center">Levels</h3>
+                    <div class="levels-container" id="levels-container">
+                        <!-- Level items will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mobile Level Toggle Button -->
+            <div class="mobile-level-toggle fixed top-4 left-4 z-50 md:hidden">
+                <button id="mobile-level-btn" class="bg-black bg-opacity-40 backdrop-blur-sm p-2 rounded-lg text-white">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Mobile Level Panel Overlay -->
+            <div id="mobile-level-panel" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden md:hidden">
+                <div class="absolute left-0 top-0 w-64 h-full bg-black bg-opacity-80 backdrop-blur-sm overflow-y-auto">
+                    <div class="p-4">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-bold">Levels</h3>
+                            <button id="close-mobile-level" class="text-white">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="levels-container" id="mobile-levels-container">
+                            <!-- Level items will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Game Area (90% width) -->
+            <div class="flex-1 flex flex-col p-2">
+                <!-- Header -->
+                <div
+                    class="flex flex-col lg:flex-row justify-between items-center bg-black bg-opacity-30 p-3 rounded-xl backdrop-blur-sm mb-3 compact-spacing">
+                    <div class="flex items-center mb-1 lg:mb-0">
+                        <div
+                            class="w-[120px] h-[60px] bg-white bg-opacity-10 rounded-lg flex items-center justify-center border border-white border-opacity-30 mr-3">
+                            <div
+                                class="w-[120px] h-[60px] bg-white bg-opacity-10 rounded-lg flex items-center justify-center border border-white border-opacity-30 overflow-hidden">
+                                <img src="Karen Typing Logo.jpg" alt="" class="w-full h-full object-cover" />
+                            </div>
+                        </div>
+                        <div class="text-center lg:text-left">
+                            <h1 class="text-xl lg:text-2xl text-blue-300 font-black mb-1"
+                                style="text-shadow: -2px 0 2px rgb(80, 52, 52);">
+                                Kawthoolei Karen Typing Tutor - Dtacer Lin
+                            </h1>
+
+                            <p class="text-xs opacity-90">Master the Karen Script with Interactive Typing</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-2 lg:gap-3 text-center">
+                        <a href="index.html"
+                            class="bg-white bg-opacity-10 px-2 py-1 rounded-lg min-w-12 flex items-center justify-center">
+                            Home
+                        </a>
+
+                        <div class="bg-white bg-opacity-10 px-2 py-1 rounded-lg min-w-12">
+                            <span class="text-sm font-bold block" id="accuracy">100%</span>
+                            <span class="text-xs opacity-80">Accuracy</span>
+                        </div>
+                        <div class="bg-white bg-opacity-10 px-2 py-1 rounded-lg min-w-12">
+                            <span class="text-sm font-bold block" id="wpm">0</span>
+                            <span class="text-xs opacity-80">WPM</span>
+                        </div>
+                        <div class="bg-white bg-opacity-10 px-2 py-1 rounded-lg min-w-12">
+                            <span class="text-sm font-bold block" id="score">0</span>
+                            <span class="text-xs opacity-80">Score</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Level Info -->
+                <div class="text-center bg-black bg-opacity-30 p-2 rounded-xl mb-2 compact-spacing">
+                    <div class="text-lg font-bold mb-2">Level <span id="current-level">1</span></div>
+                    <div class="text-sm opacity-90 mb-2">Required Accuracy: <span id="required-accuracy">85%</span>
+                    </div>
+                    <div class="w-full h-2 bg-white bg-opacity-20 rounded-full overflow-hidden">
+                        <div class="h-full bg-gradient-to-r from-green-400 to-green-600 transition-all duration-300"
+                            id="level-progress" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- Main Content -->
+                <div class="flex-1 mb-2 shadow-2xl">
+                    <div class="bg-black bg-opacity-30 rounded-xl px- 4 py-0 backdrop-blur-sm shadow-2xl mb-2 compact-spacing"
+                        id="game-area" tabindex="0">
+                        <div class="bg-black bg-opacity-30 px-3 py-2 rounded-tl-xl rounded-tr-xl mb-2 text-center ">
+                            <div class="text-lg mb-1">Type: <span
+                                    class="inline-block bg-white bg-opacity-20 px-3 py-1 rounded-lg mx-2 text-bold text-yellow-500 text-bold"
+                                    id="current-hint">Press Start to begin</span></div>
+                        </div>
+
+                        <!-- Field and Button container  -->
+                        <div class="flex gap-3 ">
+                            <!-- Display and Input section - 80% -->
+                            <div class="w-[85%] ">
+                                <!-- Text Display -->
+                                <div
+                                    class="bg-white bg-opacity-10 rounded-tl-xl rounded-tr-xl px-4 py-1 mb-2 text-display-container border-b-4">
+                                    <div class="text-content text-2xl leading-relaxed py-2 my-1" id="text-content">
+                                        Press Start to begin your Karen typing journey!
+                                    </div>
+                                </div>
+
+                                <!-- User Input Display -->
+                                <div
+                                    class="bg-white bg-opacity-15 rounded-bl-xl rounded-br-xl px-2 pb-0 mb-0 border-t-4">
+                                    <div class="text-sm opacity-80 mb-0">Your Input:</div>
+                                    <div class="user-input-container">
+                                        <div class="text-left">
+                                            <span class="text-lg lg:text-xl input-text-green user-input-text"
+                                                id="user-input-display">...</span>
+                                            <span class="typing-cursor" id="typing-cursor"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Button Section - 15% -->
+                            <div
+                                class="w-[15%] flex flex-col justify-between items-end px-4 py-1 bg-black bg-opacity-30 rounded-xl gap-2 compact-spacing">
+                                <div class="flex flex-col gap-2 lg:gap-3 justify-center w-full">
+                                    <button
+                                        class="px-4 py-2 border-none rounded-lg text-sm font-bold cursor-pointer transition-all duration-300 bg-gradient-to-r from-green-500 to-green-600 text-white hover:-translate-y-1 hover:shadow-lg"
+                                        id="start-btn">Start Game</button>
+                                    <button
+                                        class="px-4 py-2 border-none rounded-lg text-sm font-bold cursor-pointer transition-all duration-300 bg-gradient-to-r from-red-500 to-red-600 text-white hover:-translate-y-1 hover:shadow-lg"
+                                        id="reset-btn">Reset Level</button>
+                                    <button
+                                        class="px-4 py-2 border-none rounded-lg text-sm font-bold cursor-pointer transition-all duration-300 bg-gradient-to-r from-green-500 to-green-600 text-white hover:-translate-y-1 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none"
+                                        id="next-btn" disabled>Next Level</button>
+                                    <button
+                                        class="px-4 py-2 border-none rounded-lg text-sm font-bold cursor-pointer transition-all duration-300 bg-gradient-to-r from-red-500 to-red-600 text-white hover:-translate-y-1 hover:shadow-lg w-full lg:w-auto"
+                                        id="exit-btn">Exit</button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Messages -->
+                    <div id="level-complete"
+                        class="bg-green-500 bg-opacity-20 px-3 py-1 rounded-xl text-center mb-1 hidden">
+                        <h2 class="text-lg font-bold mb-1">🎉 Level Complete!</h2>
+                        <p>Congratulations! You've passed this level with <span id="final-accuracy"></span> accuracy!
+                        </p>
+                    </div>
+
+                    <div id="level-failed"
+                        class="bg-red-500 bg-opacity-20 border-2 border-red-500 px-3 py-1 rounded-xl text-center mb-1 hidden">
+                        <h2 class="text-lg font-bold mb-1">❌ Level Failed</h2>
+                        <p>You need at least <span id="required-acc"></span> accuracy to advance. But your accurancy is
+                            <span id="accuracy"></span>.Try again!
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="bg-black bg-opacity-30 backdrop-blur-sm p-2 text-center text-xs">
+            <p class="opacity-80">© 2025 Sanlinbay Karen Typing Tutor All Right Reserved!</p>
+        </div>
+    </div>
+
+    <script>
+        class KarenTypingGame {
+            constructor() {
+                this.karenMap = {
+                    'က': 'u',
+                    'ခ': 'c',
+                    'ဂ': 'Shift+8',
+                    'ဃ': 'Shift+c',
+                    'င': 'i',
+                    'စ': 'p',
+                    'ဆ': 'q',
+                    'ၡ': 'Shift+q',
+                    'ည': 'n',
+                    'တ': 'w',
+                    'ထ': 'x',
+                    'ဒ': 'Shift+k',
+                    'ဒ်': 'a',
+                    'န': 'e',
+                    'ပ': 'y',
+                    'ဖ': 'z',
+                    'ဘ': 'b',
+                    'မ': 'r',
+                    'ယ': ',',
+                    'ရ': 'Shift+7',
+                    'လ': 'v',
+                    'ဝ': 'Shift+w',
+                    'သ': 'o',
+                    'ဟ': '[',
+                    'အ': 't',
+                    'ဧ': 'Shift+{',
+                    'ါ': 'g',
+                    'ံ': 'Shift+h',
+                    'ၢ': 'Shift+x',
+                    'ၢ်': 'Shift+>',
+                    'ု': 'k',
+                    'ူ': 'l',
+                    '့': 'h',
+                    'ဲ': 'Shift+j',
+                    'ိ': 'd',
+                    'ီ': 'Shift+d',
+                    'ၥ်': 'm',
+                    'း': ';',
+                    'ၣ်': '.',
+                    'ၤ': 'Shift+r',
+                    'ြ': 'j',
+                    'ျ': 's',
+                    'မ်': 'Shift+a',
+                    'ှ': 'Shift+s',
+                    'ၠ': 'Shift+f',
+                    'ွ': 'Shift+g',
+                    'ဇ': 'Shift+z',
+                    'ျ့': 'Shift+v',
+                    'ှ့': 'Shift+b',
+                    'နီၢ်': 'Shift+n',
+                    'န့ၣ်': 'Shift+m',
+                    ',': 'Shift+<',
+                    '?': 'Shift+?',
+                    '/': '/',
+                    'စီၤ': 'f',
+                    'လီၤ': 'Shift+l',
+                    'ဒီး': 'Shift+;',
+                    'ၢၢ်': 'Shift+e',
+                    'ၢၥ်': 'Shift+t',
+                    'ၢၣ်': 'Shift+y',
+                    'ွ့': 'Shift+u',
+                    '.': 'Shift+i',
+                    'ှု': 'Shift+o',
+                    'ၦ': 'Shift+p',
+                    '(': 'Shift+(',
+                    ')': 'Shift+)',
+                    '၁': '1',
+                    '၂': '2',
+                    '၃': '3',
+                    '၄': '4',
+                    '၅': '5',
+                    '၆': '6',
+                    '၇': '7',
+                    '၈': '8',
+                    '၉': '9',
+                    '၀': '0'
+                };
+
+                // Create reverse mapping for input to Karen
+                this.reverseKarenMap = {};
+                for (let [karen, key] of Object.entries(this.karenMap)) {
+                    this.reverseKarenMap[key] = karen;
+                }
+
+                this.levels = [
+                    {
+                        text: "က ခ  ဂ ဃ င စ ဆ ၡ ည တ ထ ဒ န ပ ဖ ဘ မ ယ ရ လ ဝ သ ဟ အ ဧ",
+                        requiredAccuracy: 85,
+                        name: "လံၥ်မိၢ်ပှၢ် အပတီၢ်ညီ"
+                    },
+                    {
+                        text: "က ခ ဂ ဃ င စ ဆ ၡ ည တ ထ ဒ န ပ ဖ ဘ မ ယ ရ လ ဝ သ ဟ အ ဧ က ခ ဂ ဃ င စ ဆ ၡ ည တ ထ ဒ န ပ ဖ ဘ မ ယ ရ လ ဝ သ ဟ အ ဧ ",
+                        requiredAccuracy: 85,
+                        name: "လံၥ်မိၢ်ပှၢ် ကီထီၣ်တစဲး "
+                    },
+                    {
+                        text: "နမမကထရရ လၡဝမယ ဖမဘတဖကန ခလဝဂငတထ လဘဧဝခ ယဃရလတထက မတနအတဃလ ယကကခတတလရသၡ နမမကထရရ လၡဝမယ ဖမဘတဖကန ခလဝဂငတထ လဘဧဝခ ယဃရလတထက မတနအတဃလ ယကကခတတလရသၡ",
+                        requiredAccuracy: 85,
+                        name: "လံၥ်မိၢ်ပှၢ် ကျဲၥ်ကျီ"
+                    },
+                    {
+                        text: "ါ ံ ၢ ု ူ ့ ဲ ိ ီ ါ ံ ၢ ု ူ ့ ဲ ိ ီ ့ ိ ါ ု ံ ဲ",
+                        requiredAccuracy: 85,
+                        name: "တၢ်သီၣ်မိၢ်ပှၢ်"
+                    },
+                    {
+                        text: "ီ ါ ု ့ ၢ ု ဲ ီ ၢ ံ ဲ ါ ့ ဲ ု ံ ၢ ါ ီ ါ ု ့ ၢ ု ဲ ီ ၢ ံ ဲ ါ ့ ဲ ု ံ ၢ ါ ီ ါ ု ့ ၢ ု ဲ ီ ၢ ံ ဲ ါ ့ ဲ ု ံ ၢ ါ ီ ါ ု ့ ၢ ု ဲ ီ ၢ ံ ဲ ါ ့ ဲ ု ံ ၢ ါ ",
+                        requiredAccuracy: 85,
+                        name: "တၢ်သီၣ်မိၢ်ပှၢ်ကျဲၥ်ကျီ"
+                    },
+                    {
+                        text: "တီတီလီလီ မိမိပါပါ ဖံဖံဖုဖု နီနီစီစီ ဟီတရါပီတကါ လီကီသံ လၢကတီတီလီလီ မိမိပါပါ ဖံဖံဖုဖု နီနီစီစီ ဟီတရါပီတကါ လီကီသံ လၢကဒၢ တီတီလီလီ မိမိပါပါ ဖံဖံဖုဖု နီနီစီစီ ဟီတရါပီတကါ လီကီသံ လၢကဒၢ ",
+                        requiredAccuracy: 85,
+                        name: "လံၥ်မိၢ်ပှၢ်ဒီးတၢ်သီၣ်မိၢ်ပှၢ်"
+                    },
+                    {
+                        text: "ၢ် ၥ် း ၣ် ၤ ဒ် မ် ၥ် ၢ် မ် ၤ ၣ် း ၤ း မ် ",
+                        requiredAccuracy: 85,
+                        name: "တၢ်သီၣ်အဒ့ ၁"
+                    },
+                    {
+                        text: "မ် ၤ ၣ် း ၥ် ဒ် း ၢ် မ် ၥ် မ် ၣ် ၢ် း ၤ ဒ် ၥ် ၣ် မ် ၤ ၣ် း ၥ် ဒ် း ၢ် မ် ၥ် မ် ၣ် ၢ် း ၤ ဒ် ၥ် ၣ် မ် ၤ ၣ် း ၥ် ဒ် း ၢ် မ် ၥ် မ် ၣ် ၢ် း ၤ ဒ် ၥ် ၣ်",
+                        requiredAccuracy: 87,
+                        name: "တၢ်သီၣ်အဒ့ကျဲၥ်ကျီ"
+                    },
+                    {
+                        text: "ကတီဒီးနၤ လီကီတဂ့ၤ လူၤပိၥ်ယခံ ကညီကလုၥ် တၢ်အိၣ်ဆူၣ်အိၣ်ချ့ ကညီနီၣ်တယၢ် မ်ဒ်န့ၣ်ဒီး စီၤကညီထူ ဖီဖိတဖီး",
+                        requiredAccuracy: 87,
+                        name: "လံၥ်ပၥ်ဖှိၣ် ၁"
+                    },
+                    {
+                        text: "တၢ်ခဲလၢၥ်မၤအသးလၢတၢ်ဂ့ၤအဂီၢ်လီၤ ဘၣ်ဆၣ်နတနၥ်ယၤဘၣ် တၢ်ဘၣ်တ့ဃံလၤမ့ၢ်ယွၤတၢ်ဘၣ်တ့ ခဲလၢၥ်ခဲဆ့မ့ၢ်တၢ်ဆိၣ်ဂ့ၤ ",
+                        requiredAccuracy: 87,
+                        name: "လံၥ်ပၥ်ဖှိၣ် ၂"
+                    },
+                    {
+                        text: "ြ ျ ှ ွ ၠ ဇ ျ့ ှ့ , ? / ြ ျ ှ ွ ၠ ဇ ျ့ ှ့ , / ြ ျ",
+                        requiredAccuracy: 87,
+                        name: "တၢ်သီၣ်အဒ့ ၂"
+                    },
+                    {
+                        text: "ၠ ှ / ှ့ ျ ၠ ဇ ွ ျ ? , ျ့ ြ ၠ ှ / ှ့ ျ ၠ ဇ ွ ျ ? ျ့ ြ ၠ ှ / ှ့ ျ , ၠ ဇ ွ ျ ? ျ့ ြ ၠ ှ / ှ့ ျ ၠ ဇ , ွ ျ ? ျ့ ြ ၠ ှ / ှ့ ျ ၠ ဇ ွ ျ ? ျ့ ြ ",
+                        requiredAccuracy: 87,
+                        name: "တၢ်သီၣ်အဒ့ ၂ ကျဲၥ်ကျီ"
+                    },
+                    {
+                        text: "လံၥ်ကြီကြၥ်, တကျၢတကျါ, ယူၤဖျ့ဖျိလၢကလံၤကျါ, ကွၤချၢၣ်ကတြးလၢပှၢ်ကျါ, ပှိၤပှဲၢ်ပှ့ၤသီၣ်လၢပှၢ်ကျါ, ကၠိဖိတဖၣ်လဲၤထီၣ်ကၠိ, ဒ့ဒ့ဖိလၢကၠီကၠီအဲၣ်",
+                        requiredAccuracy: 87,
+                        name: "လံၥ်ပၥ်ဖှိၣ် ၃"
+                    },
+                    {
+                        text: "ယပှၤကလုၥ်ယဲဧၢ, ပှၤလၢအဂ့ၤကတၢၢ်, ယအဲၣ်ဒိၣ်နၤ, နအဲၣ်တၢ်တီတၢ်လိၤ, တမှံၤနအဲၣ်တူၢ်လိၥ်, နတၢ်အဂ့ၤကိးမံၤ, ယအဲၣ်ဒိၣ်မး",
+                        requiredAccuracy: 90,
+                        name: "ကညီဒီကလုၥ်တၢ်သးဝံၣ်"
+                    },
+                    {
+                        text: "ပတြၢၤအိၣ်ပှၤထံတဂ့ၤ, ပတြၢၤအိၣ်ပှၤကီၢ်တဂ့ၤ, ပှၤထံဂ့ၤပှၤထံဘၣ်ပှ့ၤ, ပှၤကီၢ်ဂ့ၤပှၤကီၢ်ဘၣ်ပှ့ၤ, ကတီၤထီၣ်က့ၤကီၢ်သူလ့ၤ, ပှၤသိးအီၣ်မ့ၤပအီၣ်မ့ၤ",
+                        requiredAccuracy: 92,
+                        name: "ကညီကီၢ်အထါ"
+                    },
+                    {
+                        text: "နီၢ် အဲၣ် န့ၣ် ဒီး ၢၥ် ၢၢ် . လီၤ  ှု ၦ ( ) ွ့ ၢၣ် နီၢ် အဲၣ် လီၤ န့ၣ် ဒီး ၢၥ် ၢၢ် လီၤ . ှု ၦ ( ) ွ့ ၢၣ် အဲၣ် ",
+                        requiredAccuracy: 93,
+                        name: "လံၥ်ဖျၢၥ်ဃါဃုၥ်"
+                    },
+                    {
+                        text: "နီၢ်ဟ့ၣ်ကၠီတၢ်အဲၣ်ခဲလၢၥ် ကွၢ်သကွ့ၤက့ၤပထံကီၢ် ဖီတၤဆှုၣ်တဖၣ်ဖီထီၣ် တၢၣ်ပီၣ်တၢၣ်ပီလိၥ်အသး ၦၤလၢအသးအါ တၢ်သ့ၣ်ညါနၢ်ပၢၢ်",
+                        requiredAccuracy: 95,
+                        name: "လံၥ်ပၥ်ဖှိၣ် ၄"
+                    },
+                    {
+                        text: "ယွၤအတၢ်ဘၣ်တ့တဖၣ်ဖျါဃံလၤဂ့ၤမးယွၤအတၢ်ဆိၣ်ဂ့ၤအါ ဟဲလၢပၢ်ယွၤပဒိးန့ၢ်ဘၣ်, တၢ်ဆိၣ်ဂ့ၤအါ ဟဲလၢပၢ်ယွၤ သ့ၣ်ညါနဲဒၣ်, ကိးမုၢ်နံၤကိးမုၢ်နၤယွၤအဘျုး တလီၤစှၤဝဲလၢပဂီၢ်, မ့ၢ်ယွၤအဘျုး အီၣ်ယွၤအဘျုး သ့ၣ်ညါစံးဘျုး. နမ့ၢ်သ့ၣ်ညါယွၤမ့ၢ်တၢ်ဒိၣ်ကစၢ်, နမ့ၢ်သ့ၣ်ညါယွၤမ့ၢ်တၢ်အဂံၢ်ထံး, နမ့ၢ်သ့ၣ်ညါယွၤမ့ၢ်တၢ်ဘျုးကစၢ်, တၢ်ဘျုးကစၢ် ကဆိၣ်ဂ့ၤနၤ, နမ့ၢ်သ့ၣ်ညါယွၤမ့ၢ်တၢ်ဒိၣ်ကစၢ်, နမ့ၢ်သ့ၣ်ညါယွၤမ့ၢ်တၢ်အဂံၢ်ထံး, နမ့ၢ်သ့ၣ်ညါယွၤမ့ၢ်တၢ်ဘျုးကစၢ် ကဆိၣ်ဂ့ၤနၤ.",
+                        requiredAccuracy: 83,
+                        name: "တၢ်ဘျုးကစၢ်"
+                    },
+                    {
+                        text: "ကညီဖိမ့ၢ်ၦၤတကလုၥ်လၢအဟဲလီၤတုၤဆိကတၢၢ်လၢကီၢ်လါ (ကီၢ်သူလ့ၤ) လၢအခဲအံၤဘၣ်တၢ်သ့ၣ်ညါအီၤဒ်ကီၢ်ပယီၤတချုးလၢကလုၥ်အဂၤတဖၣ်ဟဲတုၤလီၤဒံးဘၣ်န့ၣ်လီၤ. အဝဲသ့ၣ်အိၣ်ဟဲလီၤဝဲလၢတရူးကီၢ်(ယူၢ်နၣ်) ဒီးမ့ၢ်ၦၤတကလုၥ်လၢအဟဲလီၤစၢၤလၢၦၤမိၣ်ကိလံယၢ် (ၦၤဘီဖံးဖိ) တဖၣ်န့ၣ်လီၤ. သုးလီၤအသးတဆီဘၣ်တဆီတုၤလီၤကီၢ်လါဒီးပၥ်လီၤအတၢ်အိၣ်တၢ်ဆိးအလီၢ် တချုးခရံၥ်နံၣ် ၇၃၉ ဒံးဘၣ်ဒီး,  ဖံးအီၣ်မၤအီၣ်ဒၣ်ကစုဒုၦဲၤဒီးတၢ်သဘျ့, တၢ်ဃူတၢ်ဖိးဒီးတအိၣ်ဒီးတၢ်ထီဒုၣ်ထီဒါလိၥ်သးဒီးၦၤဂၤဘၣ်. တုၤလၢခဲအံၤဒၣ်လဲၥ်ကညီဖိအိၣ်ဒံးအါမးလၢအလုၢ် အီၣ်အသးသမူလၢတၢ်မၤအီၣ်ခုးမၤအီၣ်သံၣ်န့ၣ်လီၤ.",
+                        requiredAccuracy: 85,
+                        name: "ကညီဖိတၢ်အိၣ်မူ"
+                    },
+                    {
+                        text: "ပတၢ်အိၣ်မူလၢဟီၣ်ခိၣ်, ပဘၣ်လဲၤခီဖျိၦဲၤဒီးတၢ်ဖှီၣ် တဘျီဘျီလၢတၢ်အမုၥ်စ့ၢ်ကီး, ဒ်ပူဖိလၢအဘၣ်တၢ် တဲအီၤဒီးကတၢၢ်ကွံၥ်ဝဲအသိး, ပတၢ်အိၣ်မူမ့ၢ်ထဲတစိၢ်ဖိ. ဒ်တၢ်အၢၣ်လၢမူကပိၥ် တစိၢ်ဖိဟါမၢ်ကွံၥ်ဝဲအသိး, ပတၢ်အိၣ်မူလၢပဘၣ်ခီဖျိ, ဒ်နီၣ်ဧိၤမံၤဧိၤလၢအ မဲထီၣ်ဒီးလါဟ့ဝဲဒၣ်အသိး, ဆၢကတီၢ်ဘၣ်ဃ့ထီကွံၥ်ဝဲလီၤ. ကွၢ်ထံလီၤက့ၤနသး, လၢနတၢ်အိၣ်မူအပူၤ နမ့ၢ်ၦၤဒ်လဲၣ်တဂၤလဲၣ်န့ၣ်ဆိမိၣ်ထီၣ်က့ၤနဲဒၣ်, နမ့မ့ၢ်ဘၣ်ဖုးၦၤလၢ အလူၤအသးဒီးမၤဖဲအသး, ဃၥ်နသးသုးနံၤသုးသီတဂ့ၤ. ၦၤအိၣ်ဝဲတဂၤ, သ့တၢ်လၢၥ်ကစၢ် လၢအမဲၥ်ညါန့ၣ်အနံၣ်တကထိမၤသးဒ်မုၢ်ဟါတနံၤဖဲအပူၤကွံၥ်အသိး. ဒ်တၢ်ဆိးသီတဘျီဖိဖဲမုၢ်နၤအသိးန့ၣ်လီၤ. ကွၢ်ထံလီၤက့ၤနသး, လၢနတၢ်အိၣ်မူအပူၤ နမ့ၢ်ၦၤဒ်လဲၣ်တဂၤလဲၣ်န့ၣ်ဆိမိၣ်ထီၣ်က့ၤနဲဒၣ်, နမ့မ့ၢ်ဘၣ်ဖုးၦၤလၢ လူၤအသးဒီးမၤဖဲဒၣ်အသး, ဃၥ်နသးသုးနံၤသုးသီတဂ့ၤ.",
+                        requiredAccuracy: 85,
+                        name: "ပတၢ်အိၣ်မူလၢဟီၣ်ခိၣ်"
+                    },
+                    {
+                        text: "သ့ၣ်တထူၣ်ဒီးဖီတဒ့, သ့ၣ်တသံဖီလၥ်တဃ့. သ့ၣ်တထူၣ်ဒီးဖီတဖီး, သ့ၣ်တသံဖီတလီၤအီး. စံးမ့ၢ်ဖီတီယသးခု, ဖီဝံအုၣ်သံညၣ်ၦဲၤကု. စံးမ့ၢ်ဖီတီအိၣ်လၢ်ယၤ, ဖီဝံအုၣ်သံညၣ်ၦဲၤတြၤ. စံးမ့ၢ်ဖီတီဖီတတီ, ဖီဝံအုၣ်သံညၣ်ၦဲၤမီ. လဲၤကွၢ်လၢကၠီကၢၥ်အခုး, ဝၣ်ကျုၣ်ဘီၣ်ဂ့ၤဆှ့ၣ်ဖီဖု. လဲၤကွၢ်လၢကၠီကၢၥ်ခုးကျါ, ဝၣ်ကျုၣ်ဘီၣ်ဂ့ၤဆှ့ၣ်ဖုဒါ. ခုးတနီဝံၤအမဲၥ်ချံ, သ့ၣ်ပဒၢကီၤကူၣ်ထီၣ်မံ.",
+                        requiredAccuracy: 83,
+                        name: "ကညီထါ ၂"
+                    },
+                    {
+                        text: "ၦိၤၦံၦိၤၦီၢ် တၢ်အီၣ်အဆၣ်တၢ်ဘှီးထီၣ်. လံၥ်ကြီကြၥ်တဘ့ၣ်ကွၢ်ဟုၣ်ဆီဖိ, ဆီဖိပံဧၢမံတဂ့ၤပလီၢ်နသး လံၥ်ကြီကြၥ်ကအီၣ်ဘၣ်နၤ. ဖိဒံပြံဧၢဟဲလၢအံၤ, ဖိသၣ်ပြံဧၢဟဲလၢအံၤ, ဟဲတုၢ်သကိးဖီဘီချံ, ဟဲတုၢ်သကိးဖီဂီၤချံ, တုၢ်တုၢ်အပျံၤမ့အိၣ်ဆံ, ဆှီးထီၣ်လၢပခိၣ်ဘိၣ်ထံး. ပတြၢၤအိၣ်ၦၤထံတဂ့ၤ, ပတြၢၤအိၣ်ၦၤကီၢ်တဂ့ၤ, ၦၤထံဂ့ၤၦၤထံဘၣ်ပှ့ၤ, ၦၤကီၢ်ဂ့ၤၦၤကီၢ်ဘၣ်ပှ့ၤ, ကတီၤထီၣ်က့ၤကီၢ်သူလ့ၤ, ၦၤသိးအီၣ်မ့ၤပအီၣ်မ့ၤ.",
+                        requiredAccuracy: 85,
+                        name: "ကညီထါ ၃"
+                    },
+                    {
+                        text: "ပိၥ်မုၣ်မ့ၡါန့ၢ်အဝၤ, ပိၥ်ခွါမ့ၡါအိၣ်တဂၤ. တၢ်လၢပိၥ်မုၣ်ဒီးပိၥ်ခွါန့ၣ်အတၢ်လီၤဆီတမ့ၢ်ထဲလၢက့ၢ်ဂီၤအတၢ်လီၤဆီဘၣ်. လၢအတၢ်န့ၢ်သါဒီးအတၢ်ဘူၣ်တၢ်တီၢ်သနၥ်က့လီၤဆီစ့ၢ်ကီးလီၤ. လၢတၢ်န့ၣ်အဃိၦၤသးၦၢ်မၤအိၣ်ဝဲလၢထါဒ်အံၤ (ပိၥ်မုၣ်မ့ၡါန့ၢ်အဝၤ, ပိၥ်ခွါမ့ၡါအိၣ်တဂၤ) ဒီးထါတဖျၢၣ်အံၤအခီပညီမ့ၢ်တယိယိဖိတခါလၢပနၢ်ပၢၢ်အီၤညီဒီးမ့ၢ်တၢ်မၤအသးတခါလၢအမ့ၢ်တၢ်မ့ၢ်တၢ်တီ, တၢ်မၤအသးလၢပထံၣ်ဘၣ်မုၢ်မဆါတနံၤညါအံၤန့ၣ်လီၤ. ပိၥ်မုၣ်တဖၣ်အဲၣ်ဒိးဒိၣ်စိဒိၣ်ကမီၤ, မၤနၢၤအီၣ်ဃီၣ်ပိၥ်ခွါတဖၣ်, သူအတၢ်ခွဲးတၢ်ယၥ်အါတလၢဒီးကတိၤတၢ်သ့ မၤအသးဒ်အသ့တၢ်, သ့ၣ်ညါတၢ်ခဲလၢၥ်, မၤနၢၤအီၣ်အဝၤ, တပၥ်ကဲအဝၤဒီးထီဘိန့ၣ်အဲၣ်ဒိးဒၣ်လၢအဝၤကမၤန့ၢ်အီၤဒ်အသးလီဝဲ, ဒ်အဘၣ်သးဝဲဒီးတပၥ်ကဲဝၤအတၢ်ခွဲးတၢ်ယၥ်တၢ်သဘျ့ဘၣ်န့ၣ်လီၤ. ထံၣ်လီၤအသးလၢအကဲၦၤဒိၣ်ၦၤသ့, တၢ်ဆီၣ်လီၤသူၣ်ဆီၣ်လီၤသးတအိၣ် မ့မ့ၢ်ပိၥ်ခွါတဖၣ်တခီကဘၣ်ဆှုၣ်န့ၢ်က့ၤအမါအတၢ်ကူတၢ်ကၤ, ဖီအီၣ်တ့ၤအီၣ် ခွဲသိၣ်ခွဲပျီဒီးလၢတၢ်န့ၣ်အမဲၥ်ညါဘၣ်တၢ်ဒူတၢ်ဃါ, တၢ်သီၣ်ဝံသဲကလၤ, တၢ်ကလၥ်ဘဲးဘီးလၢၦၤမုၣ်ပှၢ်တဖၣ်တလီၢ်လီၢ်န့ၣ်လီၤ. တၢ်ခဲလၢၥ်ဆီတလဲအသး, ပိၥ်မုၣ်တဖၣ်တဆှုၣ်အဖျီၣ်ခံဖိလၢၤဘၣ်ဒီးပၥ်လီၤဝဲလၢတၢ်ဆှုၣ်ပူၤမၢအဝၤဆှုၣ်န့ၢ်အီၤ မ့မ့ၢ်အဝၤအတၢ်ကူတၢ်ကၤတခီတစဲးမးတထီးဘူးလၢၤဝဲဘၣ်. အ့န့အ့စိၢ်တၢ်ဒီတနံၤ ဘၣ်ဆၣ်တၢ်အရ့ဒိၣ်တမံၤ, အဝၤမ့ၢ်လီၤမၢ်တစိၢ်ဖိန့ၣ်ကရီဃုဝဲလူၤကိးက့ၤဝဲလၢကမၢအီၣ်ဝဲ, ကမၤနၢၤအီၣ်ဝဲအဂီၢ်လီၤ. အဃိတဘျီတခီၣ်ပိၥ်ခွါတဖၣ်အတၢ်အိၣ်မူလီၤဂၥ်က့ၤဒ်သိးအဟဲအိၣ်မူလၢဟီၣ်ခိၣ်အံၤမ့ၢ်ဒၣ်လၢအအိၣ်မူလၢၦၤဂၤအဂီၢ်ဒီးတၢ်လၢအအဲၣ်ဒိးသးလီဝဲန့ၣ်အတၢ်ခွဲးတၢ်ယၥ်တအိၣ်နီတမံၤလၢအကမၤန့ၢ်ဝဲဒ်တၢ်ဘၣ်အသးအသိးဘၣ်. ဘၣ်ဟဲကဲဒၣ်အမါအကုၢ်လၢအတၢ်အိၣ်မူအပူၤလီၤ. လၢတၢ်န့ၣ်အဃိ ပိၥ်ခွါလၢအတန့ၢ်အမါတဖၣ်မ်သုကသးခုခီဖျိလၢသုတၢ်ဃုထၢမ့ၢ်တၢ်ဂ့ၤ, တၢ်အိၣ်မူမ့ၢ်ဒၣ်တၢ်တစိၢ်တလီၢ်လီၤ. နအီၣ်တၢ်မ့ကမၣ်န့ၣ်ကမၣ်ဒၣ်တမီလီၤ. နဟးမ့ကမၣ်လၢၦၢ်ပူၤန့ၣ်မ့ၢ်ဒၣ်တကျဲအဂီၢ်လီၤ. ဘၣ်ဆၣ် နဟံနမါမ့ကမၣ်ဒုအဝဲန့ၣ်မ့ၢ်တၢ်ကမၣ်ဖးဒိၣ်, တစိၤသးလီၤ.",
+                        requiredAccuracy: 81,
+                        name: "ပိၥ်မုၣ်မုၢ်မဆါအံၤ"
+                    }
+                ];
+
+                this.currentLevel = 0;
+                this.currentCharIndex = 0;
+                this.correctCount = 0;
+                this.totalCount = 0;
+                this.startTime = null;
+                this.gameActive = false;
+                this.currentText = '';
+                this.textArray = [];
+                this.userInputArray = [];
+                this.completedLevels = new Set();
+
+                this.initElements();
+                this.initEventListeners();
+                this.initLevelPanel();
+                this.updateDisplay();
+                this.createSounds();
+                this.updateCursor();
+                this.initAudio();
+            }
+
+            initElements() {
+                this.elements = {
+                    gameArea: document.getElementById('game-area'),
+                    textDisplay: document.getElementById('text-display'),
+                    textContent: document.getElementById('text-content'),
+                    userInputDisplay: document.getElementById('user-input-display'),
+                    typingCursor: document.getElementById('typing-cursor'),
+                    startBtn: document.getElementById('start-btn'),
+                    resetBtn: document.getElementById('reset-btn'),
+                    nextBtn: document.getElementById('next-btn'),
+                    exitBtn: document.getElementById('exit-btn'),
+                    currentLevel: document.getElementById('current-level'),
+                    requiredAccuracy: document.getElementById('required-accuracy'),
+                    levelProgress: document.getElementById('level-progress'),
+                    accuracy: document.getElementById('accuracy'),
+                    wpm: document.getElementById('wpm'),
+                    score: document.getElementById('score'),
+                    levelComplete: document.getElementById('level-complete'),
+                    levelFailed: document.getElementById('level-failed'),
+                    finalAccuracy: document.getElementById('final-accuracy'),
+                    requiredAcc: document.getElementById('required-acc'),
+                    currentHint: document.getElementById('current-hint'),
+                    levelsContainer: document.getElementById('levels-container'),
+                    mobileLevelsContainer: document.getElementById('mobile-levels-container'),
+                    mobileLevelBtn: document.getElementById('mobile-level-btn'),
+                    mobileLevelPanel: document.getElementById('mobile-level-panel'),
+                    closeMobileLevel: document.getElementById('close-mobile-level')
+                };
+            }
+
+            initLevelPanel() {
+                this.createLevelItems();
+                this.updateLevelPanel();
+            }
+
+            createLevelItems() {
+                // Create level items for desktop
+                this.elements.levelsContainer.innerHTML = '';
+                this.levels.forEach((level, index) => {
+                    const levelItem = document.createElement('div');
+                    levelItem.className = 'level-item p-2 rounded-lg cursor-pointer text-sm font-medium text-center';
+                    levelItem.innerHTML = `
+                        <div class="flex items-center justify-between">
+                            <span>Level ${index + 1}</span>
+                            <span class="level-status" id="level-status-${index}">🔒</span>
+                        </div>
+                        <div class="text-xs opacity-80 mt-1">${level.name}</div>
+                    `;
+                    levelItem.addEventListener('click', () => this.selectLevel(index));
+                    this.elements.levelsContainer.appendChild(levelItem);
+                });
+
+                // Create level items for mobile
+                this.elements.mobileLevelsContainer.innerHTML = '';
+                this.levels.forEach((level, index) => {
+                    const levelItem = document.createElement('div');
+                    levelItem.className = 'level-item p-2 rounded-lg cursor-pointer text-sm font-medium text-center';
+                    levelItem.innerHTML = `
+                        <div class="flex items-center justify-between">
+                            <span>Level ${index + 1}</span>
+                            <span class="level-status" id="mobile-level-status-${index}">🔒</span>
+                        </div>
+                        <div class="text-xs opacity-80 mt-1">${level.name}</div>
+                    `;
+                    levelItem.addEventListener('click', () => {
+                        this.selectLevel(index);
+                        this.closeMobileLevelPanel();
+                    });
+                    this.elements.mobileLevelsContainer.appendChild(levelItem);
+                });
+            }
+
+            updateLevelPanel() {
+                this.levels.forEach((level, index) => {
+                    const desktopItem = this.elements.levelsContainer.children[index];
+                    const mobileItem = this.elements.mobileLevelsContainer.children[index];
+                    const desktopStatus = document.getElementById(`level-status-${index}`);
+                    const mobileStatus = document.getElementById(`mobile-level-status-${index}`);
+
+                    // Reset classes
+                    desktopItem.className = 'level-item p-2 rounded-lg cursor-pointer text-sm font-medium text-center';
+                    mobileItem.className = 'level-item p-2 rounded-lg cursor-pointer text-sm font-medium text-center';
+
+                    if (this.completedLevels.has(index)) {
+                        // Completed level
+                        desktopItem.classList.add('level-completed');
+                        mobileItem.classList.add('level-completed');
+                        desktopStatus.textContent = '✅';
+                        mobileStatus.textContent = '✅';
+                    } else if (index === this.currentLevel) {
+                        // Current level
+                        desktopItem.classList.add('level-current');
+                        mobileItem.classList.add('level-current');
+                        desktopStatus.textContent = '🎯';
+                        mobileStatus.textContent = '🎯';
+                    } else if (index === 0 || this.completedLevels.has(index - 1)) {
+                        // Available level (level 0 or previous level completed)
+                        desktopItem.classList.add('level-locked');
+                        mobileItem.classList.add('level-locked');
+                        desktopStatus.textContent = '🔓';
+                        mobileStatus.textContent = '🔓';
+                    } else {
+                        // Locked level
+                        desktopItem.classList.add('level-locked', 'level-locked-inactive');
+                        mobileItem.classList.add('level-locked', 'level-locked-inactive');
+                        desktopStatus.textContent = '🔒';
+                        mobileStatus.textContent = '🔒';
+                    }
+                });
+            }
+
+            selectLevel(levelIndex) {
+                // Check if level is accessible
+                if (levelIndex > 0 && !this.completedLevels.has(levelIndex - 1)) {
+                    return; // Level is locked - must complete previous level first
+                }
+
+                this.currentLevel = levelIndex;
+                this.updateDisplay();
+                this.updateLevelPanel();
+                this.resetLevel();
+            }
+            createSounds() {
+                try {
+                    this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    this.correctSound = this.createBeep(800, 0.1, 'sine');
+                    this.errorSound = this.createBeep(200, 0.2, 'sawtooth');
+                    this.levelCompleteSound = this.createBeep(1200, 0.5, 'sine');
+                } catch (e) {
+                    console.log('Audio context not supported');
+                    this.correctSound = () => { };
+                    this.errorSound = () => { };
+                    this.levelCompleteSound = () => { };
+                }
+            }
+            initAudio() {
+                this.gameAudio = document.getElementById('gameAudio');
+            }
+
+            createBeep(frequency, duration, type) {
+                return () => {
+                    try {
+                        const oscillator = this.audioContext.createOscillator();
+                        const gainNode = this.audioContext.createGain();
+
+                        oscillator.connect(gainNode);
+                        gainNode.connect(this.audioContext.destination);
+
+                        oscillator.frequency.value = frequency;
+                        oscillator.type = type;
+
+                        gainNode.gain.setValueAtTime(0.3, this.audioContext.currentTime);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + duration);
+
+                        oscillator.start(this.audioContext.currentTime);
+                        oscillator.stop(this.audioContext.currentTime + duration);
+                    } catch (e) {
+                        console.log('Sound play failed');
+                    }
+                };
+            }
+
+            initEventListeners() {
+                this.elements.startBtn.addEventListener('click', () => this.startGame());
+                this.elements.resetBtn.addEventListener('click', () => this.resetLevel());
+                this.elements.nextBtn.addEventListener('click', () => this.nextLevel());
+                this.elements.exitBtn.addEventListener('click', () => this.exitGame());
+
+                // Add keyboard event listeners to the game area instead of input field
+                this.elements.gameArea.addEventListener('keydown', (e) => this.handleKeyDown(e));
+
+                // Add focus event listeners to show/hide focus outline
+                this.elements.gameArea.addEventListener('focus', () => {
+                    if (this.gameActive) {
+                        this.elements.gameArea.classList.add('game-focus');
+                    }
+                });
+
+                this.elements.gameArea.addEventListener('blur', () => {
+                    this.elements.gameArea.classList.remove('game-focus');
+                });
+
+                // Mobile level panel event listeners
+                this.elements.mobileLevelBtn.addEventListener('click', () => {
+                    this.elements.mobileLevelPanel.classList.remove('hidden');
+                });
+
+                this.elements.closeMobileLevel.addEventListener('click', () => {
+                    this.closeMobileLevelPanel();
+                });
+
+                this.elements.mobileLevelPanel.addEventListener('click', (e) => {
+                    if (e.target === this.elements.mobileLevelPanel) {
+                        this.closeMobileLevelPanel();
+                    }
+                });
+            }
+
+            closeMobileLevelPanel() {
+                this.elements.mobileLevelPanel.classList.add('hidden');
+            }
+
+            exitGame() {
+                if (confirm('နမၤလိဘျဲလံဧါ.နဆၢတဲၥ်လၢနကဟးထီၣ်လီဧါ?')) {
+                    window.close();
+                }
+            }
+
+            updateCursor() {
+                if (this.gameActive) {
+                    this.elements.typingCursor.style.display = 'inline-block';
+                } else {
+                    this.elements.typingCursor.style.display = 'none';
+                }
+            }
+
+            processText(text) {
+                const words = text.split(' ');
+                const processedWords = [];
+
+                for (let word of words) {
+                    const processedChars = [];
+                    let i = 0;
+
+                    while (i < word.length) {
+                        let char = word[i];
+
+                        if (i + 1 < word.length) {
+                            const nextChar = word[i + 1];
+                            const combined = char + nextChar;
+
+                            if (this.karenMap[combined]) {
+                                processedChars.push(combined);
+                                i += 2;
+                                continue;
+                            }
+                        }
+
+                        processedChars.push(char);
+                        i++;
+                    }
+
+                    processedWords.push(processedChars);
+                }
+
+                const result = [];
+                for (let i = 0; i < processedWords.length; i++) {
+                    result.push(...processedWords[i]);
+                    if (i < processedWords.length - 1) {
+                        result.push(' ');
+                    }
+                }
+
+                return result;
+            }
+
+            startGame() {
+                this.gameActive = true;
+                this.startTime = Date.now();
+                this.currentCharIndex = 0;
+                this.correctCount = 0;
+                this.totalCount = 0;
+                this.userInputArray = [];
+
+                this.currentText = this.levels[this.currentLevel].text;
+                this.textArray = this.processText(this.currentText);
+
+                // Focus the game area instead of input field
+                this.elements.gameArea.focus();
+                this.elements.startBtn.disabled = true;
+                // Play background music
+                if (this.gameAudio) {
+                    this.gameAudio.play().catch(error => {
+                        console.log('Audio play failed:', error);
+                    });
+                }
+
+                this.updateTextDisplay();
+                this.updateUserInputDisplay();
+                this.updateHint();
+                this.updateCursor();
+                this.hideMessages();
+            }
+
+            resetLevel() {
+                this.gameActive = false;
+                this.currentCharIndex = 0;
+                this.correctCount = 0;
+                this.totalCount = 0;
+                this.startTime = null;
+                this.textArray = [];
+                this.userInputArray = [];
+
+                this.elements.startBtn.disabled = false;
+                this.elements.nextBtn.disabled = true;
+                this.elements.gameArea.classList.remove('game-focus');
+                // Stop background music on reset
+                if (this.gameAudio) {
+                    this.gameAudio.pause();
+                    this.gameAudio.currentTime = 0;
+                }
+
+                // Reset scroll position
+                this.elements.textContent.style.transform = 'translateY(0)';
+
+                this.updateDisplay();
+                this.updateTextDisplay();
+                this.updateUserInputDisplay();
+                this.updateCursor();
+                this.hideMessages();
+                this.elements.currentHint.textContent = 'Press Start to begin';
+            }
+
+            nextLevel() {
+                if (this.currentLevel < this.levels.length - 1) {
+                    this.completedLevels.add(this.currentLevel);
+                    this.currentLevel++;
+                    this.updateDisplay();
+                    this.updateLevelPanel();
+                    this.hideMessages();
+                    setTimeout(() => {
+                        this.startGame();
+                    }, 500);
+                } else {
+                    this.showGameComplete();
+                }
+            }
+
+            showErrorBadge() {
+                // Remove existing error badge if any
+                const existingBadge = document.querySelector('.error-badge');
+                if (existingBadge) {
+                    existingBadge.remove();
+                }
+
+                // Create new error badge
+                const errorBadge = document.createElement('div');
+                errorBadge.className = 'error-badge';
+                errorBadge.innerHTML = '❌ ကွၢ်လီၤတံၢ်! နဒိတၢ်ကမၣ်ဘၣ်အသး!';
+                document.body.appendChild(errorBadge);
+
+                // Remove badge after animation
+                setTimeout(() => {
+                    if (errorBadge.parentNode) {
+                        errorBadge.parentNode.removeChild(errorBadge);
+                    }
+                }, 2000);
+            }
+
+            handleKeyDown(e) {
+                if (!this.gameActive) return;
+
+                if (this.audioContext && this.audioContext.state === 'suspended') {
+                    this.audioContext.resume();
+                }
+
+                // Add this check to ignore modifier keys when pressed alone
+                if (e.key === 'Shift' || e.key === 'Control' || e.key === 'Alt' || e.key === 'Meta') {
+                    return; // Don't process modifier keys alone
+                }
+
+                e.preventDefault();
+
+                if (this.currentCharIndex >= this.textArray.length) return;
+
+                const currentChar = this.textArray[this.currentCharIndex];
+
+                if (currentChar === ' ') {
+                    if (e.key === ' ') {
+                        this.handleCorrectInput(' ');
+                    } else {
+                        this.handleErrorInput();
+                    }
+                    return;
+                }
+
+                const inputKey = this.getInputKey(e);
+                const expectedKey = this.karenMap[currentChar];
+
+                if (inputKey === expectedKey) {
+                    this.handleCorrectInput(currentChar);
+                } else {
+                    this.handleErrorInput();
+                }
+
+                this.updateStats();
+            }
+
+            handleCorrectInput(char) {
+                this.correctCount++;
+                this.totalCount++;
+                this.userInputArray.push(char);
+                this.currentCharIndex++;
+
+                this.correctSound();
+                this.updateTextDisplay();
+                this.updateUserInputDisplay();
+                this.updateHint();
+
+                if (this.currentCharIndex >= this.textArray.length) {
+                    this.finishLevel();
+                }
+            }
+
+            handleErrorInput() {
+                this.totalCount++;
+                this.errorSound();
+                this.showTextError();
+                this.showErrorBadge();
+            }
+
+            getInputKey(e) {
+                if (e.shiftKey) {
+                    if (e.key === '*') {
+                        return 'Shift+8';
+                    }
+                    if (e.key === '&') {
+                        return 'Shift+7';
+                    }
+                    if (e.key === '>') {
+                        return 'Shift+>';
+                    }
+                    if (e.key === '{') {
+                        return 'Shift+{';
+                    }
+
+                    if (e.key.length === 1 && e.key.match(/[a-zA-Z]/)) {
+                        return 'Shift+' + e.key.toLowerCase();
+                    }
+
+                    if (e.key.length === 1) {
+                        return 'Shift+' + e.key.toLowerCase();
+                    }
+                }
+
+                return e.key.toLowerCase();
+            }
+
+            updateTextDisplay() {
+                if (!this.textArray || this.textArray.length === 0) {
+                    this.elements.textContent.textContent = 'Press Start to begin your Karen typing journey!';
+                    this.elements.textContent.style.transform = 'translateY(0)';
+                    return;
+                }
+
+                let displayText = '';
+                for (let i = 0; i < this.textArray.length; i++) {
+                    const char = this.textArray[i];
+                    if (i < this.currentCharIndex) {
+                        displayText += `<span class="text-green-400">${char}</span>`;
+                    } else if (i === this.currentCharIndex) {
+                        displayText += `<span class="bg-yellow-400 text-black px-1 rounded animate-pulse">${char}</span>`;
+                    } else {
+                        displayText += char;
+                    }
+                }
+
+                this.elements.textContent.innerHTML = displayText;
+
+                // Auto-scroll logic
+                this.autoScrollText();
+            }
+
+            autoScrollText() {
+                const container = this.elements.textContent.parentElement;
+                const content = this.elements.textContent;
+
+                // Get current character position
+                const currentSpan = content.querySelector('.bg-yellow-400');
+                if (!currentSpan) return;
+
+                const containerHeight = container.offsetHeight;
+                const currentSpanTop = currentSpan.offsetTop;
+                const currentSpanHeight = currentSpan.offsetHeight;
+
+                // Calculate if we need to scroll
+                const currentTransform = this.getCurrentTransform();
+                const visibleTop = Math.abs(currentTransform);
+                const visibleBottom = visibleTop + containerHeight;
+
+                // If current character is below visible area, scroll up
+                if (currentSpanTop + currentSpanHeight > visibleBottom) {
+                    const newTransform = -(currentSpanTop - containerHeight + currentSpanHeight + 20);
+                    content.style.transform = `translateY(${newTransform}px)`;
+                }
+            }
+
+            getCurrentTransform() {
+                const style = window.getComputedStyle(this.elements.textContent);
+                const matrix = new WebKitCSSMatrix(style.transform);
+                return matrix.m42 || 0;
+            }
+
+            updateUserInputDisplay() {
+                if (this.userInputArray.length === 0) {
+                    this.elements.userInputDisplay.textContent = '...';
+                } else {
+                    this.elements.userInputDisplay.textContent = this.userInputArray.join('');
+                }
+
+                // Auto-scroll to bottom to show latest input
+                this.autoScrollUserInput();
+            }
+
+            autoScrollUserInput() {
+                const container = this.elements.userInputDisplay.closest('.user-input-container');
+                if (container) {
+                    // Scroll to bottom to show the latest input
+                    container.scrollTop = container.scrollHeight;
+                }
+            }
+
+            updateHint() {
+                if (this.currentCharIndex < this.textArray.length) {
+                    const currentChar = this.textArray[this.currentCharIndex];
+                    if (currentChar === ' ') {
+                        this.elements.currentHint.textContent = 'SPACE';
+                    } else {
+                        const expectedKey = this.karenMap[currentChar] || currentChar;
+                        this.elements.currentHint.textContent = expectedKey;
+                    }
+                } else {
+                    this.elements.currentHint.textContent = 'Complete!';
+                }
+            }
+
+            showTextError() {
+                this.elements.textContent.classList.add('char-error');
+                setTimeout(() => {
+                    this.elements.textContent.classList.remove('char-error');
+                }, 500);
+            }
+
+            updateStats() {
+                const accuracy = this.totalCount > 0 ? Math.round((this.correctCount / this.totalCount) * 100) : 100;
+                this.elements.accuracy.textContent = accuracy + '%';
+
+                if (this.startTime) {
+                    const timeElapsed = (Date.now() - this.startTime) / 1000 / 60;
+                    const wpm = Math.round((this.correctCount / 5) / timeElapsed) || 0;
+                    this.elements.wpm.textContent = wpm;
+                }
+
+                const score = this.correctCount * 10;
+                this.elements.score.textContent = score;
+
+                const progress = (this.currentCharIndex / this.textArray.length) * 100;
+                this.elements.levelProgress.style.width = progress + '%';
+            }
+
+            updateDisplay() {
+                this.elements.currentLevel.textContent = this.currentLevel + 1;
+                this.elements.requiredAccuracy.textContent = this.levels[this.currentLevel].requiredAccuracy + '%';
+                this.elements.levelProgress.style.width = '0%';
+
+                if (!this.gameActive) {
+                    this.elements.textContent.innerHTML = 'Press Start to begin your Karen typing journey!';
+                    this.elements.textContent.style.animation = 'none';
+                    this.elements.userInputDisplay.textContent = '...';
+                }
+            }
+
+            finishLevel() {
+                this.gameActive = false;
+                // Stop background music when game completes
+                if (this.gameAudio) {
+                    this.gameAudio.pause();
+                    this.gameAudio.currentTime = 0;
+                }
+                this.elements.gameArea.classList.remove('game-focus');
+                const accuracy = Math.round((this.correctCount / this.totalCount) * 100);
+                const required = this.levels[this.currentLevel].requiredAccuracy;
+
+                if (accuracy >= required) {
+                    this.showLevelComplete(accuracy);
+                    this.levelCompleteSound();
+                } else {
+                    this.showLevelFailed(accuracy, required);
+                    this.errorSound();
+                }
+            }
+
+            showLevelComplete(accuracy) {
+                this.elements.finalAccuracy.textContent = accuracy + '%';
+                this.elements.levelComplete.classList.remove('hidden');
+                this.elements.nextBtn.disabled = false;
+                this.elements.startBtn.disabled = true;
+
+                // Mark current level as completed to unlock next level
+                this.completedLevels.add(this.currentLevel);
+                this.updateLevelPanel();
+            }
+
+            showLevelFailed(accuracy, required) {
+                this.elements.requiredAcc.textContent = required + '%';
+                this.elements.levelFailed.classList.remove('hidden');
+                this.elements.startBtn.disabled = false;
+            }
+
+            hideMessages() {
+                this.elements.levelComplete.classList.add('hidden');
+                this.elements.levelFailed.classList.add('hidden');
+            }
+
+            showGameComplete() {
+                this.elements.textContent.innerHTML = '🎉 Congratulations! You have completed all levels! 🎉';
+                this.elements.textContent.style.animation = 'none';
+                this.elements.currentHint.textContent = 'Game Complete!';
+                this.elements.nextBtn.disabled = true;
+                this.elements.startBtn.disabled = true;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            new KarenTypingGame();
+        });
+    </script>
+</body>
+
+</html>

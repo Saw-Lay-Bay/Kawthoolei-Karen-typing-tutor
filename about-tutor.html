@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Kawthoolei Karen Typing Tutor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .slide {
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
+        }
+
+        .slide.active {
+            opacity: 1;
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .shadow-custom {
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .slide img {
+            width: 100%;
+            height: 150%;
+            object-fit: cover;
+            object-position: top;
+            position: absolute;
+            top: -20%;
+            left: 0;
+        }
+
+        .slide-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 10;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 min-h-screen">
+    <!-- Main Container -->
+    <div class="mx-auto px-[10%] max-w-full">
+
+        <!-- Navigation -->
+        <nav
+            class="flex items-center justify-between py-2 bg-white rounded-lg shadow-lg mb-6 sticky top-0 px-6 mt-2 z-20 ">
+            <div class="flex items-center space-x-6 ">
+                <img src="karen flag.png" alt="Karen Typing Tutor Logo" class="w-24 h-14 rounded-xl object-contain">
+                <div>
+                    <h1 class="text-2xl md:text-3xl font-bold text-gradient">About Kawthoolei Karen Typing Tutor</h1>
+                    <p class="text-gray-600 text-sm md:text-base font-medium">Learn about this program</p>
+                </div>
+            </div>
+            <div class="hidden md:flex space-x-4 pr-[10%]">
+                <a href="index.html"
+                    class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-colors duration-200">
+                    Home
+                </a>
+                <a href="typing-center.html"
+                    class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg font-medium transition-colors duration-200">
+                    Typing
+                </a>
+            </div>
+            <!-- Mobile menu button -->
+            <button class="md:hidden p-2 text-gray-600" onclick="toggleMobileMenu()">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16">
+                    </path>
+                </svg>
+            </button>
+        </nav>
+
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="md:hidden hidden bg-white rounded-lg shadow-sm mb-8 p-4">
+            <div class="flex flex-col space-y-3">
+                <button
+                    class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-colors duration-200">
+                    Home
+                </button>
+                <button
+                    class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg font-medium transition-colors duration-200">
+                    Typing
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <main class="bg-white rounded-xl shadow-custom p-8 mb-8">
+            <!-- First Text Section -->
+            <section class="mb-12">
+                <div class="prose max-w-none">
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-6">
+                        တူၢ်လိၥ်မုၥ်နၤလၢကီၢ်သူလ့ၤတၢ်ဒိလိသ့သးကညီကျိၥ်အပှၥ်ယဲၤကွီၤ</h2>
+                    <p class="text-lg text-gray-700 leading-relaxed mb-6">
+                        ကီၢ်သူလ့ၤတၢ်ဒိလိသ့သးကညီကျိၥ်အံၤမ့ၢ်၀ဲ ချုးစိၤပီးလီ (Digital)
+                        တၢ်ကူၣ်ဘၣ်ကူၣ်သ့လၢအပတီၢ်ထီတခါလၢပညိၣ်ဃၥ်လၢအကပၢၤဃၥ်ဒီးမၤထီထီၣ်ကညီကျိၥ်လၢ
+                        စၢၤသွဲၣ်သီတဖၣ်အဂီၢ်န့ၣ်လီၤ.
+                        လၢပျဲၢ်စီၤဝဲအံၤအပူၤန့ၣ်ပၥ်ဃုၥ်၀ဲဒီးတၢ်သိၣ်လိကညီကျိၥ်မ့ၢ်ဂ့ၤ, တၢ်ဆဲးတၢ်လၤ,
+                        ဒီးချုးစိၤတၢ်သ့တၢ်ဘၣ်ပၥ်ဃုၥ်ဒီးတၢ်မၤလိသ့သးလၢ ခီၣ်ဖၠူထၢၣ် တၢ်ဒိသ့သးကညီကျိၥ်တဖၣ်န့ၣ်လီၤ.
+                        ဘၣ်တၢ်ကတဲၥ်ကတီၤဒီးကယၢကယဲအီၤဒ်ဟီၣ်ခိၣ်ချၢအတၢ်ပၥ်ပနီၣ်ဘၣ်ဃးဒီးကျိၥ်လံၥ်လဲၢ် တၢ်သ့တၢ်ဘၣ်
+                        ဒံၢ်ယံၢ်တၢၣ် တၢ်သ့တၢ်ဘၣ်ပီးလီလၢအရ့ဒိၣ်ဝဲတဖၣ်
+                        ဒီးမၤလၢပှဲၤန့ၣ်ပှၤသူတၢ်ဖိအတၢ်လိၢ်ဘၣ်တဖၣ်န့ၣ်လီၤ.လၢပျဲၢ်စီၤအံၤန့ၣ် ပှၤလၢအကတိၤကညီကျိၥ်တဖၣ်မ့ၢ်ဂ့ၤ,
+                        ပှၤတမှံၤလၢအတကတိၤကညီကျိၥ်မ့ၢ်ဂ့ၤ, ပှၤဃိထံၣ်သ့ၣ်ညါတၢ် ဒီးကူၣ်သ့ပီညါပတီၢ်ထီတဖၣ်
+                        ဒီးပှၤလၢအပၢၤဃၥ်ကညီတၢ်ဆဲးတၢ်လၤတဖၣ်တဖၣ်ကမ့ၢ်တၢ်ကဲဘျုးကဲဖှိၣ်လၢအ၀ဲသ့ၣ်အဂီၢ်န့ၣ်လီၤ.
+                    </p>
+                    <p class="text-lg text-gray-700 leading-relaxed mb-6">
+                        တၢ်သ့တၢ်ဘၣ် တဖၣ်ကအိၣ်ဝဲသၢပတီၢ်း ဂံၢ်ခီၣ်ထံး, တီၤခၢၣ်သးဒီးပတီၢ်ထီန့ၣ်လီၤ. ပတီၢ်တပတီၢ်စုၥ်စုၥ်
+                        ပၥ်ဃုၥ်ဒီးတၢ်ဂ့ၢ်တၢ်ကျိၤလၢတၢ်ဖိးလိၥ်အသးလၢပှၤမၤလိသ့သးအပတီၢ်တပတီၢ်စုၥ်စုၥ်
+                        အညီဆူအကီတပတီၢ်၀ံၤတပတီၢ်ဒ်အကြၢးဒီးတၢ်မၤလိသ့သးအသိးလီၤ. တၢ်ဂ့ၢ်တၢ်ကျိၤကပၥ်ဃုၥ်ဝဲဒီး
+                        ပူဖိဘၣ်ဃးတၢ်ဆဲးတၢ်လၤ, တၢ်စံၣ်စိၤဒီးလံၥ်လဲၢ်တနီၤန့ၣ်လီၤ.
+                    </p>
+                    <p class="text-lg text-gray-700 leading-relaxed">
+                        စးထီၣ်လၢတၢ်ဒုးအိၣ်ထီၣ်ကီၢ်သူလ့ၤကညီကျိၥ် (Kawthoolei Unicode) ဒီးတၢ်ဒိလိသးအံၤန့ၣ်,
+                        ကညီကျိၥ်ကံၢ်စီတၢ်လဲၤထီၣ်လဲၤထီတဖၣ် ဘၣ်တၢ်သ့ၣ်ညါအါထီၣ်အီၤဖျိဖျိဖျါဖျါလၢ
+                        ဟီၣ်ခိၣ်ဒီဖျၢၣ်တဝၢအပူၤန့ၣ်လီၤ.
+                        တၢ်ရဲၣ်တၢ်ကျဲၤအံၤအတၢ်ပညိၣ်ကပၥ်ဃုၥ်ဝဲဒီးတၢ်သုးထီထီၣ်တၢ်ခွဲးတၢ်ယၥ်လၢတၢ်ဃုဖံးဃုမၤ, တၢ်ဃုထံၣ်သ့ၣ်ညါ,
+                        ဒီးလၢပှၤတဝၢတခါအပူၤ ပှၤကလုၥ်ဂၤလၢအတမ့ၢ်ပှၤကညီဖိဘၣ်လၢအအိၣ်ကျဲၥ်ကျီဒီးကညီဖိတဖၣ်
+                        ဒ်သိးဒီးတဂၤဘၣ်တဂၤတၢ်ဆဲးကျၢဆဲးကျိးကဂ့ၤအဂီၢ်မ့ၢ်ဂ့ၤ, ပှၤကလုၥ်တဖၣ် တၢ်ပၥ်ကဲလိၥ်သး
+                        အတၢ်ဆဲးတၢ်လၤသနူန့ၣ်လီၤ.
+                    </p>
+                    <br><br>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-6">Welcome to Kawthoolei Karen Typing
+                        Tutor</h2>
+                    <p class="text-lg text-gray-700 leading-relaxed mb-6">
+                        The Kawthoolei Karen Typing Tutor represents a pioneering educational initiative dedicated to
+                        preserving and promoting the Karen language through advanced digital technology. This
+                        comprehensive platform integrates traditional pedagogical methodologies with cutting-edge
+                        innovations, creating an immersive learning environment for Karen keyboard proficiency. Designed
+                        specifically for the global Karen community, this program addresses the critical need for
+                        standardized Karen language digital literacy tools. The platform serves native speakers,
+                        diaspora communities, academic researchers, educational institutions, and cultural preservation
+                        advocates worldwide, ensuring broad accessibility and cultural relevance across diverse learning
+                        contexts.
+                    </p>
+                    <p class="text-lg text-gray-700 leading-relaxed mb-6">
+                        This sophisticated program employs a progressive learning framework structured across three
+                        competency levels: Foundation, Intermediate, Advanced. Each level incorporates
+                        adaptive learning algorithms, comprehensive performance analytics, and interactive multimedia
+                        content featuring authentic Karen cultural materials. The platform includes traditional stories,
+                        historical documents, and contemporary literature, ensuring learners develop both technical
+                        proficiency and deep cultural understanding. Advanced features include multi-device
+                        compatibility, offline accessibility, personalized progression tracking, and detailed error
+                        pattern analysis. These technological innovations optimize the learning experience while
+                        maintaining strong connections to Karen linguistic heritage and cultural identity.
+                    </p>
+                    <p class="text-lg text-gray-700 leading-relaxed">
+                        Since its inception, the Kawthoolei Karen Typing Tutor has facilitated significant improvements
+                        in digital Karen language capabilities across global communities. The program has enhanced
+                        professional opportunities, supported academic research, facilitated intergenerational language
+                        transmission, and strengthened cultural identity among diaspora populations. This initiative
+                        contributes substantially to indigenous language revitalization movements worldwide. Future
+                        developments include advanced dictation modules, collaborative writing tools, and expanded
+                        integration with broader Karen language learning ecosystems. The platform continues evolving
+                        through ongoing collaboration with Karen language experts, educators, and community leaders,
+                        ensuring sustained relevance and effectiveness.
+                    </p>
+                    <br><br>
+                    <h3 class="text-xl md:text-3xl font-bold text-gray-800 mb-6">ကော်သူးလေ ကရင်ရိုက်နှိပ်ခြင်း
+                        ကျူတာသို့ ကြိုဆိုပါသည်။</h3>
+                    <p class="text-lg text-gray-700 leading-relaxed mb-6">
+                        ကော်သူးလေ ကရင်ရိုက်နှိပ်ခြင်း ကျူတာသည် အဆင့်မြင့် ဒစ်ဂျစ်တယ်နည်းပညာများမှတဆင့် ကရင်ဘာသာစကားကို
+                        ထိန်းသိမ်းမြှင့်တင်ရန် ရည်ရွယ်သော ရှေ့ဆောင်ပညာရေး ဆောင်ရွက်ချက်တစ်ခု ဖြစ်ပါသည်။ ဤ ကျယ်ပြန့်သော
+                        ပလပ်ဖောင်းသည် ရိုးရာ သင်ကြားရေးနည်းလမ်းများကို ခေတ်မီ ဆန်းသစ်တီထွင်မှုများနှင့် ပေါင်းစပ်ပြီး
+                        ကရင် ကီးဘုတ် ကျွမ်းကျင်မှုအတွက် နှစ်မြှုပ်သော သင်ယူမှု ပတ်ဝန်းကျင်ကို ဖန်တီးပါသည်။
+                        ကမ္ဘာ့ကရင်အသိုက်အဝန်းအတွက် အထူးဒီဇိုင်းပြုလုပ်ထားသော ဤအစီအစဉ်သည် စံချိန်စံညွှန်းရှိသော ကရင်ဘာသာ
+                        ဒစ်ဂျစ်တယ်စာတတ်မြောက်မှု ကိရိယာများအတွက် အရေးကြီးသော လိုအပ်ချက်ကို ဖြေရှင်းပေးပါသည်।
+                        ပလပ်ဖောင်းသည် မိခင်ဘာသာစကားပြောသူများ၊ ပြန့်ကျဲနေထိုင်သူများ၊ ပညာရပ်သုတေသီများ၊
+                        ပညာရေးအင်စတီကျူးများနှင့် ယဉ်ကျေးမှုထိန်းသိမ်းရေး ထောက်ခံသူများကို အကျုံးဝင်ပါသည်။
+                    </p>
+                    <p class="text-lg text-gray-700 leading-relaxed mb-6">
+                        ဤ ခေတ်မီအစီအစဉ်သည် အခြေခံ၊ အလယ်အလတ်၊ အဆင့်မြင့် ဟူသော သုံးဆင့်ရှိ တိုးတက်သော
+                        သင်ယူမှုဘောင်တည်ဆောက်ပုံကို အသုံးပြုပါသည်။ အဆင့်တိုင်းတွင် လိုက်လျောညီထွေ
+                        သင်ယူမှုအယ်လဂိုရီသမ်များ၊ ကျယ်ပြန့်သော စွမ်းဆောင်ရည်ခွဲခြမ်းစိတ်ဖြာမှုများနှင့် စစ်မှန်သော
+                        ကရင်ယဉ်ကျေးမှု အကြောင်းအရာများပါဝင်သော အပြန်အလှန် မာလ်တီမီဒီယာ အကြောင်းအရာများ ပါဝင်ပါသည်။
+                        ပလပ်ဖောင်းတွင် ရိုးရာပုံပြင်များ၊ သမိုင်းစာတမ်းများနှင့် ခေတ်ပြိုင်စာပေများ ပါဝင်ပြီး
+                        သင်ယူသူများသည် နည်းပညာဆိုင်ရာ ကျွမ်းကျင်မှုနှင့်အတူ ယဉ်ကျေးမှုဆိုင်ရာ နားလည်မှုများကိုပါ
+                        ဖွံ့ဖြိုးတိုးတက်စေကြောင်း သေချာစေပါသည်။ အဆင့်မြင့် လက္ခဏာများတွင် ကိရိယာများကြား
+                        လိုက်လျောညီထွေဖြစ်မှု၊ အော့ဖ်လိုင်းရယူနိုင်မှုနှင့် အသေးစိတ်အမှားပုံစံ ခွဲခြမ်းစိတ်ဖြာမှုများ
+                        ပါဝင်ပါသည်။
+                    </p>
+                    <p class="text-lg text-gray-700 leading-relaxed">
+                        ကော်သူးလေ ကရင်ရိုက်နှိပ်ခြင်း ကျူတာ စတင်ကတည်းက ကမ္ဘာ့အသိုက်အဝန်းများတွင် ဒစ်ဂျစ်တယ် ကရင်ဘာသာစကား
+                        စွမ်းရည်များတွင် သိသိသာသာ တိုးတက်မှုများကို လွယ်ကူချောမွေ့စေခဲ့ပါသည်။ အစီအစဉ်သည်
+                        အလုပ်အကိုင်အခွင့်အရေးများ မြှင့်တင်ခြင်း၊ ပညာရပ်သုတေသန ပံ့ပိုးခြင်း၊ မျိုးဆက်များကြား
+                        ဘာသာစကားလွှဲပြောင်းမှု လွယ်ကူချောမွေ့စေခြင်းနှင့် ပြန့်ကျဲနေထိုင်သူများအကြား ယဉ်ကျေးမှုလက္ခဏာ
+                        ခိုင်မာစေခြင်းတို့ကို ဆောင်ရွက်ပေးခဲ့ပါသည်။ ဤဆောင်ရွက်ချက်သည် ကမ္ဘာတစ်ဝှမ်း ဌာနေဘာသာစကားများ
+                        ပြန်လည်ရှင်သန်စေရေး လှုပ်ရှားမှုများကို သိသိသာသာ ပံ့ပိုးကူညီပါသည်။ အနာဂတ်
+                        ဖွံ့ဖြိုးတိုးတက်မှုများတွင် အဆင့်မြင့် ခေါ်ဆိုရေးခြင်း မော်ဂျူးများ၊ ပူးပေါင်းရေးသား
+                        ကိရိယာများနှင့် ကျယ်ပြန့်သော ကရင်ဘာသာစကား သင်ယူမှု ဂေဟစနစ်များနှင့် ပေါင်းစပ်မှု
+                        တိုးချဲ့ခြင်းတို့ ပါဝင်ပါသည်။
+                    </p>
+                </div>
+            </section>
+
+            <!-- Image Slideshow -->
+            <section class="mb-12">
+                <div
+                    class="relative w-full h-80 md:h-96 bg-gradient-to-r from-blue-100 to-purple-100 rounded-xl overflow-hidden shadow-lg z-0">
+                    <div id="slideshow" class="relative w-full h-full">
+                        <div class="slide active absolute inset-0 overflow-hidden">
+                            <img src="Image/1.jpg" alt="">
+                            <div class="slide-content">
+                                <div class="text-center text-white">
+                                    <h3 class="text-2xl font-bold mb-2">က-ကဆီ</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slide absolute inset-0 overflow-hidden">
+                            <img src="Image/2.jpg" alt="">
+                            <div class="slide-content">
+                                <div class="text-center text-white">
+                                    <h3 class="text-2xl font-bold mb-2">ခ-ခ့ယုၢ်</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slide absolute inset-0 overflow-hidden">
+                            <img src="Image/3.jpg" alt="">
+                            <div class="slide-content">
+                                <div class="text-center text-white">
+                                    <h3 class="text-2xl font-bold mb-2">ဂ-ဂုၢ်သီ</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slide absolute inset-0 overflow-hidden">
+                            <img src="Image/20.jpg" alt="">
+                            <div class="slide-content">
+                                <div class="text-center text-white">
+                                    <h3 class="text-2xl font-bold mb-2">လ-လံၥ်ကြီကြၥ်</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slide absolute inset-0 overflow-hidden">
+                            <img src="Image/15.jpg" alt="">
+                            <div class="slide-content">
+                                <div class="text-center text-white">
+                                    <h3 class="text-2xl font-bold mb-2">ဖ-ဖီတၤဆှုၣ်</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Slide Indicators -->
+                    <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 z-20">
+                        <div class="slide-indicator w-3 h-3 bg-white bg-opacity-50 rounded-full cursor-pointer transition-all duration-200"
+                            data-slide="0"></div>
+                        <div class="slide-indicator w-3 h-3 bg-white bg-opacity-50 rounded-full cursor-pointer transition-all duration-200"
+                            data-slide="1"></div>
+                        <div class="slide-indicator w-3 h-3 bg-white bg-opacity-50 rounded-full cursor-pointer transition-all duration-200"
+                            data-slide="2"></div>
+                        <div class="slide-indicator w-3 h-3 bg-white bg-opacity-50 rounded-full cursor-pointer transition-all duration-200"
+                            data-slide="3"></div>
+                        <div class="slide-indicator w-3 h-3 bg-white bg-opacity-50 rounded-full cursor-pointer transition-all duration-200"
+                            data-slide="4"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Second Text Section -->
+            <section>
+                <div class="prose max-w-none">
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-6">တၢ်အိၣ်ဖျါဒီးအတၢ်ကဲဘျုးကဲဖှိၣ်</h2>
+                    <p class="text-lg text-gray-700 leading-relaxed mb-6">
+                        ကီၢ်သူလ့ၤတၢ်ဒိလိသ့သးကညီကျိၥ်အံၤဟ့ၣ်ဒုးဝဲပှၤမၤလိတၢ်ဖိတၢ်သ့တၢ်ဘၣ်လၢအတုၤလီၤထီၣ်ဘး
+                        ဒီးမၤဖှံသူၣ်ဖှံသးပှၤမၤလိတၢ်ဖိန့ၣ်လီၤ.
+                        ပတၢ်မၤလိအံၤဟဲအသးတပတီၢ်ဘၣ်တပတီၢ်စးထီၣ်လၢဂံၢ်ခီၣ်ထံးဘၣ်ဃးတၢ်တိၢ်နီၣ်တိၢ်ဃါလံၥ်မဲၥ်ဖျၢၣ်တဆီဘၣ်တဆီတုၤလၢပတီၢ်ထီတၢ်ဒိလိသး
+                        တၢ်ဂဲၤလိတဖၣ်ဒီး ကမၤလီၤတံၢ်န့ၣ်ပှၤမၤလိတၢ်ဖိလၢကမၤသ့ဝဲ ပတီၢ်တပတီၢ်ဘၣ်တပတီၢ်ဒီးကဘၣ်ဘျုးဘၣ်ဖှိၣ်ဝဲလၢ
+                        ဖြိၣ်ကြဲၢ် ဝဲအံၤအိၣ်န့ၣ်လီၤ.
+                    </p>
+                    <p class="text-lg text-gray-700 leading-relaxed mb-6">
+                        လံၥ်မဲၥ်ဖျၢၣ်အတၢ်အိၣ်ဖျါပၥ်ဃုၥ်ဒီးတၢ်က့ၤဒိဆၢကဒါက့ၤတၢ်တကတီၢ်ဃီ, ကွၢ်ကဒါက့ၤတၢ်လဲၤကျဲအတၢ်အိၣ်သး,
+                        ရဲၣ်ကျဲၤတၢ်အပတီၢ်တဖၣ်ဒ်အ ကြၢးအဘၣ် တပတီၢ်ဘၣ်တပတီၢ်အညီဆူအကီ
+                        ဒီးလူၤပၥ်ဃုၥ်၀ဲကညီလံၥ်မဲၥ်ဖျၢၣ်လၢအပၥ်ဃုၥ်ခဲလၢၥ်လၢကညီကျိၥ်အကျါ န့ၣ်လီၤ. ဖြိၣ်ကြဲၢ်အံၤ
+                        ပၥ်ဃုၥ်ဒီးကညီတၢ်ဆဲးတၢ်လၤ, ထါ,
+                        တၢ်သးဝံၣ်တဖၣ်ဒ်သိးကမၤစၢၤပှၤမၤလိတၢ်ဖိတဖၣ်လၢကနၢ်ပၢၢ်အါထီၣ်ဘၣ်ဃးဒီးကညီကျိၥ်အဂီၢ်န့ၣ်လီၤ.
+                    </p>
+                    <p class="text-lg text-gray-700 leading-relaxed">
+                        ပပၥ်လီၤသးလၢပကဆဲးမၤဂ့ၤထီၣ် ဖြိၣ်ကြဲၢ်အံၤ ဒိးသန့ၤထီၣ်အသးခီဖျိပှၤသူတၢ်ဖိတဖၣ်
+                        အတၢ်ဒိဆၢကဒါက့ၤဒီးကညီတၢ်ကူၣ်ဘၣ်ကူၣ်သ့ အတၢ်ဃုသ့ၣ်ညါ လၢခံကတၢၢ်န့ၣ်လီၤ. တၢ်ဘျုးဒိၣ်မးလၢနဃုထၢ
+                        ကီၢ်သူလ့ၤကညီကျိၥ်တၢ်ဒိလိသးအံၤ
+                        ဒ်နတၢ်မၤလိအကျိၤကျဲဒီးပၥ်အီၤဒ်အမ့ၢ်တၢ်လီၤသူၣ်ပိၢ်သးဝးလၢတၢ်သုထီထီၣ်တၢ်ဒိကညီကျိၥ်တၢ်သ့တၢ်ဘၣ်န့ၣ်လီၤ.
+                    </p>
+                    <br><br>
+                    <div class="prose max-w-none">
+                        <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-6">Features and Benefits</h2>
+                        <p class="text-lg text-gray-700 leading-relaxed mb-6">
+                            The Kawthoolei Karen Typing Tutor offers a wide range of features designed to make learning
+                            both
+                            effective and enjoyable. Our interactive lessons progress from basic letter recognition to
+                            advanced typing exercises, ensuring that learners of all levels can benefit from the
+                            program.
+                        </p>
+                        <p class="text-lg text-gray-700 leading-relaxed mb-6">
+                            Key features include real-time feedback, progress tracking, customizable difficulty levels,
+                            and
+                            comprehensive lessons covering all aspects of Karen typing. The program also includes
+                            cultural
+                            elements and context to help learners better understand the significance of the Karen
+                            language
+                            and writing system.
+                        </p>
+                        <p class="text-lg text-gray-700 leading-relaxed">
+                            We are committed to continuously improving the program based on user feedback and the latest
+                            educational research. Thank you for choosing the Kawthoolei Karen Typing Tutor as your
+                            learning
+                            companion on this exciting journey of mastering Karen typing skills.
+                        </p>
+                        <br><br>
+                        <h2 class="text-3xl md:text-3xl font-bold text-gray-800 mb-6">လက္ခဏာများနှင့် အကျိုးကျေးဇူးများ။
+                        </h2>
+                        <p class="text-lg text-gray-700 leading-relaxed mb-6">
+                            ကော်သူးလေ ကရင်ရိုက်နှိပ်ခြင်း ကျူတာသည် သင်ယူမှုကို ထိရောက်ပြီး ပျော်ရွှင်ဖွယ်ရာ ဖြစ်စေရန်
+                            ဒီဇိုင်းပြုလုပ်ထားသော ကျယ်ပြန့်သော လက္ခဏာများကို ပေးဆောင်ပါသည်။ ကျွန်ုပ်တို့၏
+                            အပြန်အလှန်သင်ခန်းစာများသည် အခြေခံ စာလုံးသိမြင်ခြင်းမှ အဆင့်မြင့် ရိုက်နှိပ်ခြင်း
+                            လေ့ကျင့်ခန်းများအထိ တစ်ဆင့်ခြင်းစီ တိုးတက်ပြီး အဆင့်အမျိုးမျိုးရှိ သင်ယူသူများအားလုံး
+                            အစီအစဉ်မှ
+                            အကျိုးခံစားနိုင်ကြောင်း သေချာစေပါသည်။
+                        </p>
+                        <p class="text-lg text-gray-700 leading-relaxed mb-6">
+                            အဓိကလက္ခဏာများတွင် တစ်ချိန်တည်းတွင် တုံ့ပြန်ချက်ပေးခြင်း၊ တိုးတက်မှု ခြေရာခံခြင်း၊
+                            စိတ်ကြိုက်ပြင်ဆင်နိုင်သော အခက်အခဲ အဆင့်များနှင့် ကရင်ရိုက်နှိပ်ခြင်း၏ ကဏ္ဍအားလုံးကို
+                            ခြုံငုံသော
+                            ကျယ်ပြန့်သော သင်ခန်းစာများ ပါဝင်ပါသည်။ အစီအစဉ်တွင် သင်ယူသူများအား ကရင်ဘာသာစကားနှင့်
+                            ရေးသားမှု
+                            စနစ်၏ အရေးပါမှုကို ပိုမိုကောင်းမွန်စွာ နားလည်သဘောပေါက်စေရန် ယဉ်ကျေးမှုဆိုင်ရာ
+                            အစိတ်အပိုင်းများနှင့် အကြောင်းအရာများလည်း ပါဝင်ပါသည်။
+                        </p>
+                        <p class="text-lg text-gray-700 leading-relaxed">
+                            ကျွန်ုပ်တို့သည် အသုံးပြုသူများ၏ တုံ့ပြန်ချက်များနှင့် နောက်ဆုံးပေါ် ပညာရေးသုတေသနများကို
+                            အခြေခံ၍
+                            အစီအစဉ်ကို အဆက်မပြတ် တိုးတက်စေရန် ကတိပြုပါသည်။ ကရင်ရိုက်နှိပ်ခြင်း ကျွမ်းကျင်မှုများ
+                            ကျွမ်းကျင်ပိုင်နိုင်သော ဤ စိတ်လှုပ်ရှားဖွယ် ခရီးစဉ်တွင် သင်၏ သင်ယူမှု လက်တွဲဖော်အဖြစ်
+                            ကောသူလေ
+                            ကရင်ရိုက်နှိပ်ခြင်း ကျူတာကို ရွေးချယ်ပေးပါသည့်အတွက် ကျေးဇူးတင်ပါသည်။
+                        </p>
+                    </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="gradient-bg text-white py-4 mt-8">
+        <div class="text-center">
+            <p class="text-lg font-medium flex items-center justify-center">
+                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                    <path
+                        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+                </svg>
+                © 2025 Saw Lay Bay All Rights Reserved!
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const indicators = document.querySelectorAll('.slide-indicator');
+        const totalSlides = slides.length;
+
+        function showSlide(index) {
+            slides.forEach(slide => slide.classList.remove('active'));
+            indicators.forEach(indicator => indicator.classList.remove('bg-white'));
+
+            slides[index].classList.add('active');
+            indicators[index].classList.add('bg-white');
+            indicators[index].classList.remove('bg-opacity-50');
+
+            // Reset other indicators
+            indicators.forEach((indicator, i) => {
+                if (i !== index) {
+                    indicator.classList.add('bg-opacity-50');
+                }
+            });
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % totalSlides;
+            showSlide(currentSlide);
+        }
+
+        // Auto-advance slides every 5 seconds
+        setInterval(nextSlide, 5000);
+
+        // Click handlers for indicators
+        indicators.forEach((indicator, index) => {
+            indicator.addEventListener('click', () => {
+                currentSlide = index;
+                showSlide(currentSlide);
+            });
+        });
+
+        // Initialize first slide indicator
+        showSlide(0);
+
+        // Mobile menu toggle
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        }
+    </script>
+</body>
+
+</html>
