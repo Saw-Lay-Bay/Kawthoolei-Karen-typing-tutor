@@ -856,13 +856,13 @@
                         this.levelCompleteSound = () => { };
                     }
                 }
-                // initAudio() {
-                //     this.gameAudio = document.getElementById('gameAudio');
-                //     // Set background music to half volume
-                //     if (this.gameAudio) {
-                //         this.gameAudio.volume = 0.6; // Half of the 0.3 used for sound effects
-                //     }
-                // }
+                initAudio() {
+                    this.gameAudio = document.getElementById('gameAudio');
+                    // Set background music to half volume
+                    if (this.gameAudio) {
+                        this.gameAudio.volume = 0.6; // Half of the 0.3 used for sound effects
+                    }
+                }
 
                 createBeep(frequency, duration, type) {
                     return () => {
@@ -1346,6 +1346,7 @@
 
 
 </html>
+
 
 
 
